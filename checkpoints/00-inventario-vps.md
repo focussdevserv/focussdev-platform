@@ -15,7 +15,6 @@ Status: concluído. Focussdev antigo removido com backup validado.
 
 - Projeto `credmaisapp` e sua instalação Supabase completa.
 - Projeto `evolutions`: Evolution API, PostgreSQL, Redis e volume de instâncias.
-- Volume e backups relacionados a `botscassino`.
 - EasyPanel, Traefik, Docker e redes compartilhadas.
 - Portas, certificados e arquivos compartilhados da infraestrutura.
 
@@ -63,6 +62,17 @@ O aplicativo antigo usa aproximadamente 88 MiB de RAM. Não há volume Docker no
 - Todos os 13 containers do Supabase de `credmaisapp`: em execução; os serviços com health check permanecem saudáveis.
 - Hash das definições dos serviços protegidos permaneceu idêntico antes e depois.
 - Hash do inventário dos containers `credmaisapp` permaneceu idêntico antes e depois.
+
+## Limpeza autorizada do `botscassino`
+
+Executada em 20/09/2026, após autorização explícita do proprietário.
+
+- Não havia container, serviço ou rede ativa do projeto.
+- O volume `botscassino_autobet_autobet-data` não possuía consumidores e foi removido.
+- Os três backups exclusivos em `/etc/easypanel/backups/botscassino` foram removidos.
+- O diretório `/etc/easypanel/projects/botscassino` já estava ausente.
+- A busca final não encontrou container, serviço, volume, rede, pasta ou backup com o nome `botscassino`.
+- O hash do inventário e do estado de todos os containers foi idêntico antes e depois da limpeza.
 
 ## Capacidade após a limpeza
 
