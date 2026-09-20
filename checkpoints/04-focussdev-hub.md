@@ -76,3 +76,11 @@ monitoramento, cofre, automação, WhatsApp ou banco. Ele é apenas navegação.
 9. Laço de retorno: falha no deploy bloqueia a publicação; monitoramento HTTP será ligado no Uptime
    Kuma quando o domínio estiver ativo.
 10. Mapa atualizado: `docs/architecture.md`.
+
+## Decisao de acesso
+
+Cloudflare Zero Trust/Access nao foi ativado porque esta conta exige cartao ou PayPal mesmo no
+plano Free. Nao houve assinatura ou cobranca. O Hub permanece estatico no Cloudflare Pages;
+cada aplicacao protege seu proprio acesso e SSO oficial quando suportado.
+
+Estado: stack concluida. Proxima stack: DeskcommCRM.
