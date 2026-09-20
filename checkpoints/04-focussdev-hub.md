@@ -84,3 +84,10 @@ plano Free. Nao houve assinatura ou cobranca. O Hub permanece estatico no Cloudf
 cada aplicacao protege seu proprio acesso e SSO oficial quando suportado.
 
 Estado: stack concluida. Proxima stack: DeskcommCRM.
+
+## Atualizacao do painel central
+
+- Menu principal com `Meu dia`, `Aplicacoes` e `Administracao`.
+- Secao `Meu dia` com atalhos reais para Authentik, Uptime Kuma e Vaultwarden.
+- Proxima etapa do CRM mostrada como pendente, sem numeros ou dados simulados.
+- QA visual aprovado em desktop (1440px) e mobile (Pixel 7 emulacao Playwright).
