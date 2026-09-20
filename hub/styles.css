@@ -122,6 +122,84 @@ a {
   font-weight: 650;
 }
 
+.hub-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  margin-left: auto;
+  margin-right: 24px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.hub-nav a {
+  text-decoration: none;
+}
+
+.hub-nav a:hover,
+.hub-nav a:focus-visible {
+  color: var(--text);
+}
+
+.daily-panel {
+  padding-bottom: 72px;
+}
+
+.daily-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.daily-card {
+  display: flex;
+  min-height: 142px;
+  flex-direction: column;
+  gap: 9px;
+  padding: 18px;
+  color: inherit;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  text-decoration: none;
+}
+
+a.daily-card {
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+a.daily-card:hover,
+a.daily-card:focus-visible {
+  border-color: rgba(255, 90, 54, 0.46);
+  transform: translateY(-2px);
+}
+
+.daily-card-next {
+  border-color: rgba(247, 185, 85, 0.2);
+}
+
+.daily-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.daily-card strong {
+  font-size: 1rem;
+}
+
+.daily-card > span:last-child {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
 .environment-dot,
 .status-dot {
   display: inline-block;
@@ -373,6 +451,10 @@ footer span:first-child {
     grid-template-columns: 1fr;
   }
 
+  .daily-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hero {
     padding-top: 68px;
   }
@@ -390,6 +472,10 @@ footer span:first-child {
     text-align: right;
   }
 
+  .hub-nav {
+    display: none;
+  }
+
   main,
   footer {
     width: min(100% - 28px, 1180px);
@@ -404,6 +490,10 @@ footer span:first-child {
     grid-template-columns: 44px 1fr;
     min-height: 146px;
     padding: 18px;
+  }
+
+  .daily-grid {
+    grid-template-columns: 1fr;
   }
 
   .module-icon {

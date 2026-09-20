@@ -29,6 +29,11 @@
         <span class="environment-dot" aria-hidden="true"></span>
         Ecossistema em implantação
       </div>
+      <nav class="hub-nav" aria-label="Menu principal">
+        <a href="#meu-dia">Meu dia</a>
+        <a href="#aplicacoes">Aplicações</a>
+        <a href="https://auth.focussdev.space">Administração</a>
+      </nav>
     </header>
 
     <main>
@@ -43,6 +48,39 @@
         <div class="legend" aria-label="Legenda dos módulos">
           <span><i class="status-dot is-online" aria-hidden="true"></i>Disponível</span>
           <span><i class="status-dot is-building" aria-hidden="true"></i>Em implantação</span>
+        </div>
+      </section>
+
+      <section class="daily-panel" aria-labelledby="meu-dia-titulo">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">VISÃO GERAL</p>
+            <h2 id="meu-dia-titulo">Meu dia</h2>
+          </div>
+          <p>Estado da implantação atual</p>
+        </div>
+
+        <div class="daily-grid">
+          <a class="daily-card" href="https://auth.focussdev.space">
+            <span class="daily-label"><i class="status-dot is-online" aria-hidden="true"></i>Identidade</span>
+            <strong>Authentik</strong>
+            <span>Administração de usuários, grupos e acesso.</span>
+          </a>
+          <a class="daily-card" href="https://status.focussdev.space">
+            <span class="daily-label"><i class="status-dot is-online" aria-hidden="true"></i>Operação</span>
+            <strong>Uptime Kuma</strong>
+            <span>Monitoramento e incidentes dos serviços.</span>
+          </a>
+          <a class="daily-card" href="https://cofre.focussdev.space">
+            <span class="daily-label"><i class="status-dot is-online" aria-hidden="true"></i>Acessos</span>
+            <strong>Vaultwarden</strong>
+            <span>Credenciais protegidas da operação.</span>
+          </a>
+          <article class="daily-card daily-card-next">
+            <span class="daily-label"><i class="status-dot is-building" aria-hidden="true"></i>Próxima etapa</span>
+            <strong>DeskcommCRM</strong>
+            <span>Instalação aguardando um Supabase dedicado.</span>
+          </article>
         </div>
       </section>
 
