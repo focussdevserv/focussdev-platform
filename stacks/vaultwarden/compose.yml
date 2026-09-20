@@ -1,0 +1,44 @@
+name: focuss-vaultwarden
+
+services:
+  vaultwarden:
+    image: docker.io/vaultwarden/server:1.37.3
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 127.0.0.1:8082:80
+    environment:
+      DOMAIN: https://cofre.focussdev.space
+      SIGNUPS_ALLOWED: "false"
+      INVITATIONS_ALLOWED: "true"
+      DISABLE_ADMIN_TOKEN: "true"
+      SHOW_PASSWORD_HINT: "false"
+      LOG_LEVEL: warn
+      EXTENDED_LOGGING: "true"
+      TZ: America/Sao_Paulo
+      SSO_ENABLED: "true"
+      SSO_ONLY: "false"
+      SSO_AUTHORITY: https://auth.focussdev.space/application/o/vaultwarden/
+      SSO_CLIENT_ID: focussdev-vaultwarden
+      SSO_CLIENT_SECRET: ${VAULTWARDEN_SSO_CLIENT_SECRET:?SSO client secret obrigatorio}
+      SSO_SCOPES: openid profile email offline_access
+      SSO_SIGNUPS_ALLOWED: "false"
+      SSO_SIGNUPS_MATCH_EMAIL: "true"
+    volumes:
+      - data:/data
+    networks:
+      default: {}
+      easypanel:
+        aliases:
+          - focuss-vaultwarden
+    labels:
+      focussdev.stack: vaultwarden
+
+volumes:
+  data:
+    name: focuss-vaultwarden-data
+
+networks:
+  easypanel:
+    external: true

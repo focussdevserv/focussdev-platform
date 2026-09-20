@@ -1,0 +1,21 @@
+http:
+  routers:
+    focuss-uptime-kuma-http:
+      rule: Host(`status.focussdev.space`)
+      entryPoints:
+        - http
+      middlewares:
+        - redirect-to-https
+      service: focuss-uptime-kuma
+    focuss-uptime-kuma-https:
+      rule: Host(`status.focussdev.space`)
+      entryPoints:
+        - https
+      service: focuss-uptime-kuma
+      tls:
+        certResolver: letsencrypt
+  services:
+    focuss-uptime-kuma:
+      loadBalancer:
+        servers:
+          - url: http://focuss-uptime-kuma:3001

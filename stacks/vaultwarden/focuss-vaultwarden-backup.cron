@@ -1,0 +1,1 @@
+45 2 * * * root /opt/focussdev/stacks/vaultwarden/backup.sh >> /var/log/focuss-vaultwarden-backup.log 2>&1

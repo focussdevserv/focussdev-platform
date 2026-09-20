@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+secrets/
+*.key
+*.pem
+*.pfx
+*.log
+data/
+backups/
+runtime/

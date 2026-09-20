@@ -1,0 +1,24 @@
+# Focussdev Platform
+
+Camada de infraestrutura e integração do ecossistema Focussdev.
+
+Este repositório não replica interfaces dos produtos integrados. Cada aplicação mantém seu frontend, backend, banco, volumes, migrations e ciclo de atualização originais.
+
+## Princípios
+
+- Uma stack por vez.
+- Imagens e versões fixadas.
+- Bancos e volumes isolados.
+- SSO somente por mecanismos oficialmente suportados.
+- APIs e webhooks no lugar de acesso direto ao banco de outra aplicação.
+- Checkpoint obrigatório antes de avançar.
+- Segredos nunca entram no Git.
+
+## Estrutura
+
+- `docs/`: arquitetura, inventário e operação.
+- `checkpoints/`: estado verificável de cada stack.
+- `stacks/`: manifests externos, sem cópia do código upstream.
+- `hub/`: única interface própria, limitada à entrada e navegação.
+- `integrations/`: workflows e contratos de eventos.
+

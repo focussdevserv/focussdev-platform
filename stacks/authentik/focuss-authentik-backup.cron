@@ -1,0 +1,1 @@
+15 2 * * * root /opt/focussdev/stacks/authentik/backup.sh 2>&1 | logger -t focuss-authentik-backup

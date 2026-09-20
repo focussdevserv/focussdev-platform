@@ -1,0 +1,25 @@
+name: focuss-uptime-kuma
+
+services:
+  uptime-kuma:
+    image: docker.io/louislam/uptime-kuma:2.5.5
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:3001:3001
+    volumes:
+      - data:/app/data
+    networks:
+      default: {}
+      easypanel:
+        aliases:
+          - focuss-uptime-kuma
+    labels:
+      focussdev.stack: uptime-kuma
+
+volumes:
+  data:
+    name: focuss-uptime-kuma-data
+
+networks:
+  easypanel:
+    external: true

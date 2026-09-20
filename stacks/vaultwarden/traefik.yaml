@@ -1,0 +1,22 @@
+http:
+  routers:
+    focuss-vaultwarden-http:
+      rule: Host(`cofre.focussdev.space`)
+      entryPoints:
+        - http
+      middlewares:
+        - redirect-to-https
+      service: focuss-vaultwarden
+    focuss-vaultwarden-https:
+      rule: Host(`cofre.focussdev.space`)
+      priority: 100
+      entryPoints:
+        - https
+      service: focuss-vaultwarden
+      tls:
+        certResolver: letsencrypt
+  services:
+    focuss-vaultwarden:
+      loadBalancer:
+        servers:
+          - url: http://focuss-vaultwarden:80

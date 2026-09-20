@@ -1,0 +1,22 @@
+http:
+  routers:
+    focuss-authentik-http:
+      rule: Host(`auth.focussdev.space`)
+      entryPoints:
+        - http
+      middlewares:
+        - redirect-to-https
+      service: focuss-authentik
+    focuss-authentik-https:
+      rule: Host(`auth.focussdev.space`)
+      entryPoints:
+        - https
+      service: focuss-authentik
+      tls:
+        certResolver: letsencrypt
+  services:
+    focuss-authentik:
+      loadBalancer:
+        servers:
+          - url: http://focuss-authentik-server:9000
+
