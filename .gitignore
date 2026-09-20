@@ -9,3 +9,4 @@ secrets/
 data/
 backups/
 runtime/
+.wrangler/
