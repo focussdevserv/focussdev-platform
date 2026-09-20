@@ -55,3 +55,17 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - name: Export deploy artifact
+        uses: docker/build-push-action@v6
+        with:
+          context: services/integration-service
+          outputs: type=docker,dest=/tmp/focussdev-integration-service.tar
+          tags: ghcr.io/focussdevserv/focussdev-integration-service:main
+          labels: ${{ steps.meta.outputs.labels }}
+      - name: Upload deploy artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: focussdev-integration-service-image
+          path: /tmp/focussdev-integration-service.tar
+          retention-days: 7
+          compression-level: 0
