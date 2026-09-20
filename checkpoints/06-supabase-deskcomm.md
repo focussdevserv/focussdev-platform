@@ -15,6 +15,9 @@ Estado: em andamento; instalação concluída, publicação e jornada real pende
 - App e scheduler saudáveis; worker corrigido com chaves de criptografia geradas localmente.
 - Supabase e CRM usam volumes/projetos próprios; nenhum recurso do `credmaisapp` foi usado.
 - Porta temporária de validação: `http://72.62.138.208:3005`.
+- DNS `crm.focussdev.space` confirmado em `72.62.138.208`.
+- DNS `supabase.focussdev.space` criado pela API Hostinger em `72.62.138.208`.
+- Hub publicado com WAHA no lugar da Evolution API; deploy e resposta HTTP 200 validados.
 
 ## Isolamento preservado
 
@@ -25,8 +28,9 @@ Estado: em andamento; instalação concluída, publicação e jornada real pende
 
 ## Pendente
 
-- Criar DNS `crm.focussdev.space` e `supabase.focussdev.space` apontando para a VPS.
-- Validar HTTPS via Traefik após DNS.
+- Criar a rota Traefik do CRM: o domínio ainda recebe 404 do proxy.
+- Emitir certificados TLS confiáveis para CRM e Supabase: o Supabase já chega ao Kong, mas ainda
+  apresenta o certificado padrão não confiável do proxy.
 - Remover a porta temporária 3005 depois do domínio HTTPS.
 - Concluir onboarding do primeiro usuário e conectar WhatsApp via QR code.
 - Provar envio e recebimento real de mensagem e persistência da sessão WAHA após reinício.
@@ -38,5 +42,7 @@ Estado: em andamento; instalação concluída, publicação e jornada real pende
 
 ## Acessos operacionais pendentes
 
-- Autorizar a chave pública `focussdev-platform-deploy` na VPS para operação sem senha.
-- Disponibilizar um token da API Hostinger fora do Git e do chat para gerenciar o DNS.
+- Aplicar a chave pública `focussdev-platform-deploy` no sistema operacional da VPS. Ela foi criada
+  e anexada à VPS `1257466` pela API Hostinger, mas o servidor existente ainda a recusa; anexar na
+  conta não alterou o `authorized_keys` da instalação atual.
+- Rotacionar os tokens temporários da Hostinger depois de concluir o acesso automatizado.

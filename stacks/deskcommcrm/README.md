@@ -33,7 +33,8 @@ funcional completa. O estado verificável mais recente está em
 
 ## Pendências atuais
 
-- Publicar `crm.focussdev.space` e `supabase.focussdev.space` com DNS e HTTPS.
+- Publicar `crm.focussdev.space` e `supabase.focussdev.space` com rotas Traefik e HTTPS; os dois
+  registros DNS já apontam para a VPS.
 - Retirar a porta temporária `3005` depois da validação pelo domínio.
 - Concluir o onboarding do primeiro usuário.
 - Conectar e provar uma sessão real do WhatsApp no WAHA.
