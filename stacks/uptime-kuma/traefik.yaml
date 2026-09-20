@@ -20,9 +20,11 @@ http:
     focuss-uptime-kuma-frame-policy:
       headers:
         customResponseHeaders:
-          Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space"
+          X-Frame-Options: ""
+          Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space https://*.focussdev.space https://focussdev-hub.pages.dev"
   services:
     focuss-uptime-kuma:
       loadBalancer:
         servers:
           - url: http://focuss-uptime-kuma:3001
+

@@ -25,101 +25,209 @@
         </div>
 
         <nav class="primary-nav" aria-label="Áreas do Focussdev">
-          <button class="nav-home is-active" type="button" data-route="home">
-            <span class="nav-icon" aria-hidden="true">⌂</span><span>Meu dia</span>
-          </button>
-
-          <section class="nav-group" data-group="crm">
+          <!-- 1. INÍCIO -->
+          <section class="nav-group is-open" data-group="inicio">
             <button class="nav-group-trigger" type="button" aria-expanded="true">
-              <span class="nav-group-title"><span class="nav-icon">CRM</span>CRM</span><span class="chevron">⌄</span>
+              <span class="nav-group-title"><span class="nav-icon">⌂</span>Início</span><span class="chevron">⌄</span>
             </button>
             <div class="nav-group-items">
-              <a href="https://crm.focussdev.space/app">Dashboard <i class="live-dot"></i><span aria-hidden="true">↗</span></a>
-              <a href="https://crm.focussdev.space/app/prospecting">Leads <span aria-hidden="true">↗</span></a>
-              <a href="https://crm.focussdev.space/app/contacts">Clientes <span aria-hidden="true">↗</span></a>
-              <a href="https://crm.focussdev.space/app/kanban">Oportunidades <span aria-hidden="true">↗</span></a>
-              <a href="https://crm.focussdev.space/app/inbox">Conversas <span aria-hidden="true">↗</span></a>
+              <button class="is-active" type="button" data-route="home">Meu dia <i class="live-dot"></i></button>
+              <button type="button" data-route="carteira">Carteira de Clientes</button>
+              <button type="button" data-route="timeline">Timeline Unificada</button>
             </div>
           </section>
 
-          <section class="nav-group" data-group="financeiro">
+          <!-- 2. CLIENTES -->
+          <section class="nav-group" data-group="clientes">
             <button class="nav-group-trigger" type="button" aria-expanded="false">
-              <span class="nav-group-title"><span class="nav-icon">$</span>Financeiro</span><span class="chevron">⌄</span>
+              <span class="nav-group-title"><span class="nav-icon">CLI</span>Clientes</span><span class="chevron">⌄</span>
             </button>
             <div class="nav-group-items" hidden>
-              <button type="button" data-planned="AureusERP">Dashboard</button>
-              <button type="button" data-planned="AureusERP">Receitas</button>
-              <button type="button" data-planned="AureusERP">Despesas</button>
-              <button type="button" data-planned="AureusERP">Contas a receber</button>
-              <button type="button" data-planned="AureusERP">Cobranças</button>
+              <button type="button" data-route="cliente-360" class="highlight-item">★ Cliente 360° <i class="live-dot"></i></button>
+              <button type="button" data-route="onboarding" class="highlight-item">+ Novo Cliente (Onboarding) <i class="live-dot"></i></button>
+              <button type="button" data-app="crm-contacts" data-title="Todos os Clientes" data-url="https://crm.focussdev.space/app/contacts" data-symbol="CRM" data-color="blue">Todos os Clientes</button>
+              <button type="button" data-route="carteira">Carteira & Portfólio</button>
+              <button type="button" data-route="mapa-cliente">Mapa do Cliente</button>
             </div>
           </section>
 
+          <!-- 3. ATENDIMENTO (CRM) -->
+          <section class="nav-group" data-group="atendimento">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">CHAT</span>Atendimento</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-app="crm-inbox" data-title="Inbox & Conversas" data-url="https://crm.focussdev.space/app/inbox" data-symbol="CRM" data-color="blue">Inbox / Conversas <i class="live-dot"></i></button>
+              <button type="button" data-app="crm-radar" data-title="Radar de Atendimento" data-url="https://crm.focussdev.space/app/radar" data-symbol="CRM" data-color="blue">Radar</button>
+              <button type="button" data-app="crm-agenda" data-title="Agenda & Compromissos" data-url="https://crm.focussdev.space/app/agenda" data-symbol="CRM" data-color="blue">Agenda</button>
+              <button type="button" data-app="crm-quick-replies" data-title="Respostas Rápidas" data-url="https://crm.focussdev.space/app/quick-replies" data-symbol="CRM" data-color="blue">Respostas Rápidas</button>
+            </div>
+          </section>
+
+          <!-- 4. COMERCIAL & FUNIS (CRM) -->
+          <section class="nav-group" data-group="comercial">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">COM</span>Comercial</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-app="crm-kanban" data-title="Funis de Vendas" data-url="https://crm.focussdev.space/app/kanban" data-symbol="CRM" data-color="blue">Funis (Kanban)</button>
+              <button type="button" data-app="crm-deals" data-title="Oportunidades & Leads" data-url="https://crm.focussdev.space/app/kanban" data-symbol="CRM" data-color="blue">Oportunidades</button>
+              <button type="button" data-app="crm-tasks" data-title="Tarefas Comerciais" data-url="https://crm.focussdev.space/app/tasks" data-symbol="CRM" data-color="blue">Tarefas Comerciais</button>
+              <button type="button" data-app="crm-dash" data-title="Painel Geral do CRM" data-url="https://crm.focussdev.space/app" data-symbol="CRM" data-color="blue">Ver tudo em CRM</button>
+            </div>
+          </section>
+
+          <!-- 5. AGENTE DE IA (CRM) -->
+          <section class="nav-group" data-group="agentes-ia">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">IA</span>Agente de IA</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-app="crm-ai-agents" data-title="Agentes de IA" data-url="https://crm.focussdev.space/app/ai/agents" data-symbol="CRM" data-color="blue">Meus Agentes</button>
+              <button type="button" data-app="crm-ai-followups" data-title="Follow-ups Inteligentes" data-url="https://crm.focussdev.space/app/ai/followups" data-symbol="CRM" data-color="blue">Follow-ups</button>
+              <button type="button" data-app="crm-ai-routers" data-title="Roteadores de Atendimento" data-url="https://crm.focussdev.space/app/ai/routers" data-symbol="CRM" data-color="blue">Roteadores</button>
+              <button type="button" data-app="crm-ai-hub" data-title="Central de IA" data-url="https://crm.focussdev.space/app/ai" data-symbol="CRM" data-color="blue">Ver tudo em IA</button>
+            </div>
+          </section>
+
+          <!-- 6. CANAIS & CONEXÕES (CRM) -->
+          <section class="nav-group" data-group="canais">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">CAN</span>Canais</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-app="crm-connections" data-title="Conexões WhatsApp (WAHA)" data-url="https://crm.focussdev.space/app/connections" data-symbol="CRM" data-color="blue">Conexões WhatsApp</button>
+              <button type="button" data-app="crm-webhooks" data-title="Webhooks & Gatilhos" data-url="https://crm.focussdev.space/app/webhooks" data-symbol="CRM" data-color="blue">Webhooks</button>
+            </div>
+          </section>
+
+          <!-- 7. ANÁLISE & MÉTRICAS (CRM) -->
+          <section class="nav-group" data-group="analise">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">MET</span>Análise</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-app="crm-metrics" data-title="Desempenho & Métricas" data-url="https://crm.focussdev.space/app/metrics" data-symbol="CRM" data-color="blue">Desempenho</button>
+              <button type="button" data-app="crm-ads" data-title="Meta Ads & Campanhas" data-url="https://crm.focussdev.space/app/ads/meta" data-symbol="CRM" data-color="blue">Meta Ads</button>
+              <button type="button" data-app="crm-activities" data-title="Registro de Atividades" data-url="https://crm.focussdev.space/app/activities" data-symbol="CRM" data-color="blue">Atividades</button>
+              <button type="button" data-app="crm-analytics" data-title="Visão Geral de Análise" data-url="https://crm.focussdev.space/app/analytics" data-symbol="CRM" data-color="blue">Ver tudo em Análise</button>
+            </div>
+          </section>
+
+          <!-- 8. PROJETOS (Plane) -->
           <section class="nav-group" data-group="projetos">
             <button class="nav-group-trigger" type="button" aria-expanded="false">
-              <span class="nav-group-title"><span class="nav-icon">PR</span>Projetos</span><span class="chevron">⌄</span>
+              <span class="nav-group-title"><span class="nav-icon">PRJ</span>Projetos</span><span class="chevron">⌄</span>
             </button>
             <div class="nav-group-items" hidden>
-              <button type="button" data-planned="Plane">Dashboard</button>
-              <button type="button" data-planned="Plane">Projetos</button>
-              <button type="button" data-planned="Plane">Tarefas</button>
-              <button type="button" data-planned="Plane">Bugs</button>
+              <button type="button" data-route="projeto-360" class="highlight-item">★ Projeto 360° <i class="live-dot"></i></button>
+              <button type="button" data-app="plane-overview" data-title="Visão Geral de Projetos" data-url="https://projetos.focussdev.space" data-symbol="PL" data-color="blue">Visão Geral</button>
+              <button type="button" data-app="plane-tasks" data-title="Tarefas & Work Items" data-url="https://projetos.focussdev.space" data-symbol="PL" data-color="blue">Tarefas & Itens</button>
+              <button type="button" data-app="plane-cycles" data-title="Ciclos & Sprints" data-url="https://projetos.focussdev.space" data-symbol="PL" data-color="blue">Ciclos & Sprints</button>
+              <button type="button" data-app="plane-modules" data-title="Módulos & Entregas" data-url="https://projetos.focussdev.space" data-symbol="PL" data-color="blue">Módulos & Entregas</button>
+              <button type="button" data-app="plane-bugs" data-title="Bugs & Falhas" data-url="https://projetos.focussdev.space" data-symbol="PL" data-color="blue">Bugs & Falhas</button>
+              <button type="button" data-app="plane-boards" data-title="Quadros (Kanban/Gantt)" data-url="https://projetos.focussdev.space" data-symbol="PL" data-color="blue">Quadros Kanban & Gantt</button>
             </div>
           </section>
 
-          <section class="nav-group" data-group="contratos">
+          <!-- 9. DOCUMENTOS & CONTRATOS (Documenso) -->
+          <section class="nav-group" data-group="documentos">
             <button class="nav-group-trigger" type="button" aria-expanded="false">
-              <span class="nav-group-title"><span class="nav-icon">CT</span>Contratos</span><span class="chevron">⌄</span>
+              <span class="nav-group-title"><span class="nav-icon">DOC</span>Documentos</span><span class="chevron">⌄</span>
             </button>
             <div class="nav-group-items" hidden>
-              <button type="button" data-planned="Documenso">Documentos</button>
-              <button type="button" data-planned="Documenso">Propostas</button>
-              <button type="button" data-planned="Documenso">Contratos</button>
-              <button type="button" data-planned="Documenso">Assinaturas</button>
+              <button type="button" data-app="doc-proposals" data-title="Propostas Comerciais" data-url="https://docs.focussdev.space" data-symbol="DOC" data-color="orange">Propostas Comerciais</button>
+              <button type="button" data-app="doc-contracts" data-title="Contratos Digitais" data-url="https://docs.focussdev.space" data-symbol="DOC" data-color="orange">Contratos Digitais</button>
+              <button type="button" data-app="doc-envelopes" data-title="Documentos & Envelopes" data-url="https://docs.focussdev.space" data-symbol="DOC" data-color="orange">Documentos & Envelopes</button>
+              <button type="button" data-app="doc-signatures" data-title="Assinaturas Pendentes" data-url="https://docs.focussdev.space" data-symbol="DOC" data-color="orange">Assinaturas Pendentes</button>
+              <button type="button" data-app="doc-templates" data-title="Modelos / Templates" data-url="https://docs.focussdev.space" data-symbol="DOC" data-color="orange">Modelos & Templates</button>
+              <button type="button" data-app="doc-audit" data-title="Trilha de Auditoria" data-url="https://docs.focussdev.space" data-symbol="DOC" data-color="orange">Trilha de Auditoria</button>
             </div>
           </section>
 
+          <!-- 10. FINANCEIRO (AureusERP) -->
+          <section class="nav-group" data-group="financeiro">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">FIN</span>Financeiro</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-app="erp-overview" data-title="Visão Financeira" data-url="https://erp.focussdev.space" data-symbol="ERP" data-color="green">Visão Financeira</button>
+              <button type="button" data-app="erp-revenue" data-title="Receitas & Faturamento" data-url="https://erp.focussdev.space" data-symbol="ERP" data-color="green">Receitas & Faturamento</button>
+              <button type="button" data-app="erp-expenses" data-title="Despesas & Custos" data-url="https://erp.focussdev.space" data-symbol="ERP" data-color="green">Despesas & Custos</button>
+              <button type="button" data-app="erp-receivable" data-title="Contas a Receber" data-url="https://erp.focussdev.space" data-symbol="ERP" data-color="green">Contas a Receber</button>
+              <button type="button" data-app="erp-payable" data-title="Contas a Pagar" data-url="https://erp.focussdev.space" data-symbol="ERP" data-color="green">Contas a Pagar</button>
+              <button type="button" data-app="erp-cashflow" data-title="Fluxo de Caixa" data-url="https://erp.focussdev.space" data-symbol="ERP" data-color="green">Fluxo de Caixa</button>
+              <button type="button" data-app="erp-mrr" data-title="Mensalidades & MRR" data-url="https://erp.focussdev.space" data-symbol="ERP" data-color="green">Mensalidades & MRR</button>
+              <button type="button" data-app="erp-accounts" data-title="Contas & Conciliação" data-url="https://erp.focussdev.space" data-symbol="ERP" data-color="green">Contas & Conciliação</button>
+              <button type="button" data-app="erp-reports" data-title="Relatórios Financeiros" data-url="https://erp.focussdev.space" data-symbol="ERP" data-color="green">Relatórios Financeiros</button>
+              <button type="button" data-route="vencimentos">Central de Vencimentos</button>
+            </div>
+          </section>
+
+          <!-- 11. SUPORTE & TICKETS (FreeScout) -->
           <section class="nav-group" data-group="suporte">
             <button class="nav-group-trigger" type="button" aria-expanded="false">
-              <span class="nav-group-title"><span class="nav-icon">SP</span>Suporte</span><span class="chevron">⌄</span>
+              <span class="nav-group-title"><span class="nav-icon">SUP</span>Suporte</span><span class="chevron">⌄</span>
             </button>
             <div class="nav-group-items" hidden>
-              <button type="button" data-planned="FreeScout">Tickets</button>
-              <button type="button" data-planned="FreeScout">Clientes</button>
+              <button type="button" data-app="fs-tickets" data-title="Todos os Chamados" data-url="https://suporte.focussdev.space" data-symbol="FS" data-color="violet">Todos os Chamados</button>
+              <button type="button" data-app="fs-mailboxes" data-title="Caixas de Entrada" data-url="https://suporte.focussdev.space" data-symbol="FS" data-color="violet">Caixas de Entrada</button>
+              <button type="button" data-app="fs-customers" data-title="Clientes de Suporte" data-url="https://suporte.focussdev.space" data-symbol="FS" data-color="violet">Clientes de Suporte</button>
+              <button type="button" data-app="fs-reports" data-title="Relatórios & SLA" data-url="https://suporte.focussdev.space" data-symbol="FS" data-color="violet">Relatórios de SLA</button>
             </div>
           </section>
 
-          <section class="nav-group" data-group="codigo">
+          <!-- 12. DOCUMENTAÇÃO & WIKI (BookStack) -->
+          <section class="nav-group" data-group="documentacao">
             <button class="nav-group-trigger" type="button" aria-expanded="false">
-              <span class="nav-group-title"><span class="nav-icon">&lt;/&gt;</span>Código</span><span class="chevron">⌄</span>
+              <span class="nav-group-title"><span class="nav-icon">WIKI</span>Wiki</span><span class="chevron">⌄</span>
             </button>
             <div class="nav-group-items" hidden>
-              <button type="button" data-planned="Forgejo">Repositórios</button>
-              <button type="button" data-planned="Forgejo">Issues</button>
-              <button type="button" data-planned="Forgejo">Releases</button>
+              <button type="button" data-app="bs-wiki" data-title="Base de Conhecimento" data-url="https://wiki.focussdev.space" data-symbol="BS" data-color="blue">Base de Conhecimento</button>
+              <button type="button" data-app="bs-books" data-title="Livros por Cliente/Projeto" data-url="https://wiki.focussdev.space" data-symbol="BS" data-color="blue">Livros por Projeto</button>
+              <button type="button" data-app="bs-manuals" data-title="Manuais & Procedimentos" data-url="https://wiki.focussdev.space" data-symbol="BS" data-color="blue">Procedimentos (POPs)</button>
             </div>
           </section>
 
+          <!-- 13. DESENVOLVIMENTO (Forgejo) -->
+          <section class="nav-group" data-group="desenvolvimento">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">DEV</span>Código</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-app="git-repos" data-title="Repositórios de Código" data-url="https://git.focussdev.space" data-symbol="GIT" data-color="orange">Repositórios</button>
+              <button type="button" data-app="git-commits" data-title="Commits & Histórico" data-url="https://git.focussdev.space" data-symbol="GIT" data-color="orange">Commits & Histórico</button>
+              <button type="button" data-app="git-prs" data-title="Pull Requests & Revisões" data-url="https://git.focussdev.space" data-symbol="GIT" data-color="orange">Pull Requests</button>
+              <button type="button" data-app="git-releases" data-title="Releases & Versões" data-url="https://git.focussdev.space" data-symbol="GIT" data-color="orange">Releases & Tags</button>
+              <button type="button" data-route="deploys">Central de Deploys</button>
+            </div>
+          </section>
+
+          <!-- 14. INFRAESTRUTURA & MONITORAMENTO -->
+          <section class="nav-group" data-group="infraestrutura">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">INF</span>Infraestrutura</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-app="uptime" data-title="Monitoramento de Uptime" data-url="https://status.focussdev.space/dashboard" data-symbol="UP" data-color="green">Status & Uptime <i class="live-dot"></i></button>
+              <button type="button" data-app="beszel" data-title="Métricas de Servidor" data-url="https://status.focussdev.space" data-symbol="VPS" data-color="violet">Métricas da VPS</button>
+              <button type="button" data-app="supabase" data-title="Banco de Dados & Storage" data-url="https://supabase.focussdev.space" data-symbol="DB" data-color="green">Banco de Dados & Storage</button>
+              <button type="button" data-route="ativos">Central de Ativos</button>
+              <button type="button" data-route="backups">Central de Backups</button>
+            </div>
+          </section>
+
+          <!-- 15. CONFIGURAÇÕES & SEGURANÇA -->
           <section class="nav-group" data-group="configuracoes">
             <button class="nav-group-trigger" type="button" aria-expanded="false">
-              <span class="nav-group-title"><span class="nav-icon">CF</span>Configurações</span><span class="chevron">⌄</span>
+              <span class="nav-group-title"><span class="nav-icon">CFG</span>Configurações</span><span class="chevron">⌄</span>
             </button>
             <div class="nav-group-items" hidden>
-              <button type="button" data-route="integrations">Integrações</button>
-              <a href="https://auth.focussdev.space">Usuários e acesso <span aria-hidden="true">↗</span></a>
-              <a href="https://cofre.focussdev.space">Credenciais <span aria-hidden="true">↗</span></a>
-            </div>
-          </section>
-
-          <section class="nav-group" data-group="operacao">
-            <button class="nav-group-trigger" type="button" aria-expanded="true">
-              <span class="nav-group-title"><span class="nav-icon">OP</span>Operação</span><span class="chevron">⌄</span>
-            </button>
-            <div class="nav-group-items">
-              <button type="button" data-app="uptime" data-title="Monitoramento" data-url="https://status.focussdev.space/dashboard">Monitoramento <i class="live-dot"></i></button>
-              <a href="https://auth.focussdev.space">Identidade <span aria-hidden="true">↗</span></a>
-              <a href="https://cofre.focussdev.space">Cofre <span aria-hidden="true">↗</span></a>
-              <button type="button" data-planned="BookStack">Documentação</button>
+              <button type="button" data-app="crm-settings" data-title="Configurações do CRM" data-url="https://crm.focussdev.space/app/settings" data-symbol="CRM" data-color="blue">Configurações do CRM</button>
+              <button type="button" data-app="cofre" data-title="Cofre de Senhas (Vaultwarden)" data-url="https://cofre.focussdev.space" data-symbol="VW" data-color="violet">Cofre de Senhas <i class="live-dot"></i></button>
+              <button type="button" data-app="auth" data-title="Usuários & Permissões (Authentik)" data-url="https://auth.focussdev.space" data-symbol="ID" data-color="orange">Usuários & SSO <i class="live-dot"></i></button>
+              <button type="button" data-route="integrations">Central de Integrações</button>
+              <button type="button" data-route="auditoria">Auditoria Geral</button>
             </div>
           </section>
         </nav>
@@ -178,10 +286,10 @@
               <section class="panel quick-panel">
                 <div class="panel-heading"><div><p class="eyebrow">ACESSO RÁPIDO</p><h2>Aplicações disponíveis</h2></div><span class="health-pill"><i></i>Operacional</span></div>
                 <div class="quick-apps">
-                  <a href="https://auth.focussdev.space" class="quick-app"><span class="app-symbol orange">ID</span><span><strong>Authentik</strong><small>Identidade e acesso</small></span><b>↗</b></a>
-                  <button type="button" class="quick-app" data-app="uptime" data-symbol="UP" data-color="green" data-title="Monitoramento" data-url="https://status.focussdev.space/dashboard"><span class="app-symbol green">UP</span><span><strong>Uptime Kuma</strong><small>Monitoramento</small></span><b>→</b></button>
-                  <a href="https://cofre.focussdev.space" class="quick-app"><span class="app-symbol violet">VW</span><span><strong>Vaultwarden</strong><small>Senhas e acessos</small></span><b>↗</b></a>
-                  <a href="https://crm.focussdev.space/app" class="quick-app"><span class="app-symbol blue">CRM</span><span><strong>DeskcommCRM</strong><small>Comercial e WhatsApp</small></span><b>↗</b></a>
+                  <button type="button" class="quick-app" data-app="crm-dash" data-symbol="CRM" data-color="blue" data-title="DeskcommCRM" data-url="https://crm.focussdev.space/app"><span class="app-symbol blue">CRM</span><span><strong>DeskcommCRM</strong><small>Comercial, WhatsApp & IA</small></span><b>→</b></button>
+                  <button type="button" class="quick-app" data-app="uptime" data-symbol="UP" data-color="green" data-title="Monitoramento de Uptime" data-url="https://status.focussdev.space/dashboard"><span class="app-symbol green">UP</span><span><strong>Uptime Kuma</strong><small>Status dos serviços</small></span><b>→</b></button>
+                  <button type="button" class="quick-app" data-app="cofre" data-symbol="VW" data-color="violet" data-title="Cofre de Senhas" data-url="https://cofre.focussdev.space"><span class="app-symbol violet">VW</span><span><strong>Vaultwarden</strong><small>Senhas e credenciais</small></span><b>→</b></button>
+                  <button type="button" class="quick-app" data-app="auth" data-symbol="ID" data-color="orange" data-title="Autenticação & SSO" data-url="https://auth.focussdev.space"><span class="app-symbol orange">ID</span><span><strong>Authentik</strong><small>Identidade e acesso</small></span><b>→</b></button>
                 </div>
               </section>
 
@@ -207,12 +315,16 @@
 
           <section class="app-view" id="app-view" hidden aria-live="polite">
             <div class="app-view-bar">
-              <div><span class="app-symbol green" id="app-symbol">UP</span><span><strong id="app-title">Monitoramento</strong><small id="app-description">Aplicação original · Uptime Kuma</small></span></div>
-              <div><span class="health-pill"><i></i>Conectado</span><a id="open-original" href="https://status.focussdev.space" aria-label="Abrir aplicação original">Abrir original ↗</a></div>
+              <div><span class="app-symbol green" id="app-symbol">UP</span><span><strong id="app-title">Aplicação Integrada</strong><small id="app-description">Aplicação original · Focussdev Shell</small></span></div>
+              <div class="app-view-actions">
+                <button type="button" class="frame-action-btn" id="reload-frame" title="Recarregar tela">↻ Recarregar</button>
+                <span class="health-pill"><i></i>Seguro</span>
+                <a id="open-original" href="https://crm.focussdev.space" target="_blank" rel="noopener noreferrer" aria-label="Abrir aplicação em aba externa">Abrir em nova aba ↗</a>
+              </div>
             </div>
             <div class="frame-shell" id="frame-shell">
-              <div class="frame-loading" id="frame-loading"><span class="spinner"></span><strong>Carregando aplicação original</strong><small>Conectando com segurança ao Uptime Kuma…</small></div>
-              <iframe id="app-frame" title="Uptime Kuma" src="about:blank" allow="clipboard-read; clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+              <div class="frame-loading" id="frame-loading"><span class="spinner"></span><strong>Carregando aplicação integrada</strong><small>Conectando com segurança…</small></div>
+              <iframe id="app-frame" title="Aplicação integrada" src="about:blank" allow="camera; microphone; display-capture; clipboard-read; clipboard-write; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
             </div>
           </section>
 
@@ -232,6 +344,21 @@
               <article><strong>—</strong><span>última sincronização</span></article>
             </div>
             <div class="integration-groups" id="integration-groups"></div>
+          </section>
+
+          <section class="native-view" id="native-view" hidden aria-live="polite">
+            <div class="native-heading">
+              <div>
+                <p class="eyebrow" id="native-eyebrow">FOCUSSDEV CORE</p>
+                <h1 id="native-title">Visão</h1>
+                <p id="native-description">Módulo nativo e transversal do Focussdev.</p>
+              </div>
+              <div class="native-header-actions">
+                <span class="stage-pill" id="native-badge">Módulo Nativo</span>
+                <button type="button" class="primary-action" data-route="home">Meu dia <span>→</span></button>
+              </div>
+            </div>
+            <div class="native-content" id="native-content"></div>
           </section>
         </main>
       </section>

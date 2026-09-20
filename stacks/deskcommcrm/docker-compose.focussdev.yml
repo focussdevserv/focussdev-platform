@@ -9,6 +9,9 @@ services:
       traefik.http.routers.deskcomm.entrypoints: https
       traefik.http.routers.deskcomm-waha-block.entrypoints: https
       traefik.http.routers.deskcomm-http.entrypoints: http
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.X-Frame-Options: ""
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space https://*.focussdev.space https://focussdev-hub.pages.dev"
+      traefik.http.routers.deskcomm.middlewares: deskcomm-compress,focussdev-frame
   worker:
     networks:
       - internal

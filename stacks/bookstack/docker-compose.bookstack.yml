@@ -7,13 +7,15 @@ services:
     restart: unless-stopped
 
     environment:
-      APP_URL: https://docs.focussdev.space
+      APP_URL: https://wiki.focussdev.space
       APP_NAME: "Focussdev Docs"
-      APP_KEY: base64:${BOOKSTACK_APP_KEY}
+      APP_KEY: ${APP_KEY:-base64:duvjy1Aw7EIoPBRmHBshmVIzqILQ8pEtPH+BtnVZDGc=}
 
       DB_HOST: bookstack-db
       DB_USER: bookstack_user
-      DB_PASS: ${BOOKSTACK_DB_PASSWORD}
+      DB_USERNAME: bookstack_user
+      DB_PASS: ${BOOKSTACK_DB_PASSWORD:-${MYSQL_PASSWORD:-bookstack_db_secure_2026}}
+      DB_PASSWORD: ${BOOKSTACK_DB_PASSWORD:-${MYSQL_PASSWORD:-bookstack_db_secure_2026}}
       DB_DATABASE: bookstack_db
 
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
@@ -24,24 +26,29 @@ services:
       CACHE_DRIVER: file
 
     ports:
-      - "3005:80"
+      - "3005:8080"
 
     volumes:
-      - bookstack-uploads:/app/public/uploads
-      - bookstack-storage:/app/storage
+      - bookstack-uploads:/var/www/bookstack/public/uploads
+      - bookstack-storage:/var/www/bookstack/storage
 
     depends_on:
       - bookstack-db
 
     networks:
       - focussdev-network
+      - easypanel
 
     labels:
       traefik.enable: "true"
+      traefik.docker.network: "easypanel"
       traefik.http.routers.bookstack.rule: Host(`wiki.focussdev.space`)
-      traefik.http.routers.bookstack.entrypoints: websecure
+      traefik.http.routers.bookstack.entrypoints: https
       traefik.http.routers.bookstack.tls.certresolver: letsencrypt
-      traefik.http.services.bookstack.loadbalancer.server.port: "80"
+      traefik.http.routers.bookstack.middlewares: focussdev-frame
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.X-Frame-Options: ""
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space https://*.focussdev.space https://focussdev-hub.pages.dev"
+      traefik.http.services.bookstack.loadbalancer.server.port: "8080"
 
   bookstack-db:
     image: mariadb:latest
@@ -49,9 +56,13 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_USER: bookstack_user
-      MYSQL_PASSWORD: ${BOOKSTACK_DB_PASSWORD}
+      MYSQL_PASSWORD: ${BOOKSTACK_DB_PASSWORD:-${MYSQL_PASSWORD:-bookstack_db_secure_2026}}
       MYSQL_DATABASE: bookstack_db
-      MYSQL_ROOT_PASSWORD: ${BOOKSTACK_DB_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${BOOKSTACK_DB_ROOT_PASSWORD:-${MYSQL_ROOT_PASSWORD:-bookstack_root_2026}}
+      MARIADB_USER: bookstack_user
+      MARIADB_PASSWORD: ${BOOKSTACK_DB_PASSWORD:-${MYSQL_PASSWORD:-bookstack_db_secure_2026}}
+      MARIADB_DATABASE: bookstack_db
+      MARIADB_ROOT_PASSWORD: ${BOOKSTACK_DB_ROOT_PASSWORD:-${MYSQL_ROOT_PASSWORD:-bookstack_root_2026}}
     volumes:
       - bookstack-db-data:/var/lib/mysql
     networks:
@@ -79,4 +90,6 @@ volumes:
 
 networks:
   focussdev-network:
+    external: true
+  easypanel:
     external: true

@@ -2,19 +2,22 @@ version: '3.9'
 
 services:
   freescout:
-    image: freescout/freescout:latest
+    image: ghcr.io/nfrastack/container-freescout:latest
     container_name: focussdev_freescout
     restart: unless-stopped
 
     environment:
       APP_URL: https://suporte.focussdev.space
+      SITE_URL: https://suporte.focussdev.space
       APP_NAME: "Focussdev Suporte"
-      APP_KEY: base64:${FREESCOUT_APP_KEY}
+      APP_KEY: ${APP_KEY:-base64:WEWCgHNnDwAYOU6B2Q6nOgqwOFlCKeLU4iq5qqrR1hQ=}
 
       DB_HOST: freescout-db
       DB_USER: freescout_user
-      DB_PASSWORD: ${FREESCOUT_DB_PASSWORD}
+      DB_PASS: ${FREESCOUT_DB_PASSWORD:-${MYSQL_PASSWORD:-freescout_db_secure_2026}}
+      DB_PASSWORD: ${FREESCOUT_DB_PASSWORD:-${MYSQL_PASSWORD:-freescout_db_secure_2026}}
       DB_DATABASE: freescout_db
+      DB_NAME: freescout_db
 
       MAIL_DRIVER: smtp
       MAIL_HOST: ${MAIL_HOST:-smtp.mailtrap.io}
@@ -35,23 +38,32 @@ services:
 
     networks:
       - focussdev-network
+      - easypanel
 
     labels:
       traefik.enable: "true"
+      traefik.docker.network: "easypanel"
       traefik.http.routers.freescout.rule: Host(`suporte.focussdev.space`)
-      traefik.http.routers.freescout.entrypoints: websecure
+      traefik.http.routers.freescout.entrypoints: https
       traefik.http.routers.freescout.tls.certresolver: letsencrypt
+      traefik.http.routers.freescout.middlewares: focussdev-frame
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.X-Frame-Options: ""
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space https://*.focussdev.space https://focussdev-hub.pages.dev"
       traefik.http.services.freescout.loadbalancer.server.port: "80"
 
   freescout-db:
-    image: mysql:8-alpine
+    image: mariadb:10.11
     container_name: focussdev_freescout-db
     restart: unless-stopped
     environment:
       MYSQL_USER: freescout_user
-      MYSQL_PASSWORD: ${FREESCOUT_DB_PASSWORD}
+      MYSQL_PASSWORD: ${FREESCOUT_DB_PASSWORD:-${MYSQL_PASSWORD:-freescout_db_secure_2026}}
       MYSQL_DATABASE: freescout_db
-      MYSQL_ROOT_PASSWORD: ${FREESCOUT_DB_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${FREESCOUT_DB_ROOT_PASSWORD:-${MYSQL_ROOT_PASSWORD:-freescout_root_2026}}
+      MARIADB_USER: freescout_user
+      MARIADB_PASSWORD: ${FREESCOUT_DB_PASSWORD:-${MYSQL_PASSWORD:-freescout_db_secure_2026}}
+      MARIADB_DATABASE: freescout_db
+      MARIADB_ROOT_PASSWORD: ${FREESCOUT_DB_ROOT_PASSWORD:-${MYSQL_ROOT_PASSWORD:-freescout_root_2026}}
     volumes:
       - freescout-db-data:/var/lib/mysql
     networks:
@@ -79,4 +91,6 @@ volumes:
 
 networks:
   focussdev-network:
+    external: true
+  easypanel:
     external: true

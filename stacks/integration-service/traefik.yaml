@@ -1,0 +1,43 @@
+http:
+  routers:
+    focuss-integration-http:
+      rule: Host(`api.focussdev.space`)
+      entryPoints:
+        - http
+      middlewares:
+        - redirect-to-https
+      service: focuss-integration
+    focuss-integration-https:
+      rule: Host(`api.focussdev.space`)
+      entryPoints:
+        - https
+      middlewares:
+        - focuss-integration-cors
+      service: focuss-integration
+      tls:
+        certResolver: letsencrypt
+  middlewares:
+    focuss-integration-cors:
+      headers:
+        accessControlAllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+          - PATCH
+        accessControlAllowHeaders:
+          - "*"
+        accessControlAllowOriginList:
+          - "https://app.focussdev.space"
+          - "https://focussdev-hub.pages.dev"
+          - "http://localhost:3000"
+          - "http://localhost:4173"
+          - "http://localhost:5173"
+        accessControlMaxAge: 100
+        addVaryHeader: true
+  services:
+    focuss-integration:
+      loadBalancer:
+        servers:
+          - url: http://focuss-integration-service-api-1:3100

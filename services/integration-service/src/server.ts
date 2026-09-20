@@ -4,10 +4,13 @@ import { isAdminRequest } from "./auth.js";
 import { integrationKeys } from "./catalog.js";
 import { loadConfig } from "./config.js";
 import { createPool } from "./database.js";
+import { registerPlatformCoreRoutes } from "./platform-core.js";
 
 const config = loadConfig();
 const pool = createPool(config.DATABASE_URL);
 const app = Fastify({ logger: true, bodyLimit: 1_048_576 });
+
+registerPlatformCoreRoutes(app, pool);
 
 app.get("/health", async (_request, reply) => {
   try {

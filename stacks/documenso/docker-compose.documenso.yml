@@ -8,6 +8,8 @@ services:
 
     environment:
       DATABASE_URL: postgresql://documenso_user:${DOCUMENSO_DB_PASSWORD}@documenso-db:5432/documenso_db
+      NEXT_PRIVATE_DATABASE_URL: postgresql://documenso_user:${DOCUMENSO_DB_PASSWORD}@documenso-db:5432/documenso_db
+      NEXT_PRIVATE_DIRECT_DATABASE_URL: postgresql://documenso_user:${DOCUMENSO_DB_PASSWORD}@documenso-db:5432/documenso_db
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: https://docs.focussdev.space
 
@@ -37,16 +39,21 @@ services:
 
     networks:
       - focussdev-network
+      - easypanel
 
     labels:
       traefik.enable: "true"
+      traefik.docker.network: "easypanel"
       traefik.http.routers.documenso.rule: Host(`docs.focussdev.space`)
-      traefik.http.routers.documenso.entrypoints: websecure
+      traefik.http.routers.documenso.entrypoints: https
       traefik.http.routers.documenso.tls.certresolver: letsencrypt
+      traefik.http.routers.documenso.middlewares: focussdev-frame
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.X-Frame-Options: ""
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space https://*.focussdev.space https://focussdev-hub.pages.dev"
       traefik.http.services.documenso.loadbalancer.server.port: "3000"
 
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -97,4 +104,6 @@ volumes:
 
 networks:
   focussdev-network:
+    external: true
+  easypanel:
     external: true

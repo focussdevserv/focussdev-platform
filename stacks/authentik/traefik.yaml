@@ -11,12 +11,19 @@ http:
       rule: Host(`auth.focussdev.space`)
       entryPoints:
         - https
+      middlewares:
+        - focussdev-frame-policy
       service: focuss-authentik
       tls:
         certResolver: letsencrypt
+  middlewares:
+    focussdev-frame-policy:
+      headers:
+        customResponseHeaders:
+          X-Frame-Options: ""
+          Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space https://*.focussdev.space https://focussdev-hub.pages.dev"
   services:
     focuss-authentik:
       loadBalancer:
         servers:
           - url: http://focuss-authentik-server:9000
-

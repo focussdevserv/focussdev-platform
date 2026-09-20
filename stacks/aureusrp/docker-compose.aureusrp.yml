@@ -39,7 +39,7 @@ services:
       LOG_LEVEL: info
 
     ports:
-      - "3001:3000"
+      - "127.0.0.1:3011:8000"
 
     volumes:
       - aureusrp-data:/home/frappe/frappe-bench/sites
@@ -51,22 +51,25 @@ services:
 
     networks:
       - focussdev-network
+      - easypanel
 
     labels:
       traefik.enable: "true"
+      traefik.docker.network: "easypanel"
       traefik.http.routers.aureusrp.rule: Host(`erp.focussdev.space`)
-      traefik.http.routers.aureusrp.entrypoints: websecure
+      traefik.http.routers.aureusrp.entrypoints: https
       traefik.http.routers.aureusrp.tls.certresolver: letsencrypt
+      traefik.http.routers.aureusrp.middlewares: focussdev-frame
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.X-Frame-Options: ""
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space https://*.focussdev.space https://focussdev-hub.pages.dev"
       traefik.http.services.aureusrp.loadbalancer.server.port: "8000"
-      traefik.http.services.aureusrp.loadbalancer.healthcheck.path: /api/health
-      traefik.http.services.aureusrp.loadbalancer.healthcheck.interval: 30s
 
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      test: ["CMD-SHELL", "python3 -c \"import socket; s = socket.socket(); s.connect(('127.0.0.1', 8000))\""]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 90s
+      start_period: 30s
 
   aureusrp-db:
     image: postgres:17.6-alpine
@@ -111,30 +114,23 @@ services:
     image: alpine:3.20
     container_name: focussdev_aureusrp-backup
     restart: unless-stopped
-
-    entrypoint: |
-      sh -c "
-      apk add --no-cache postgresql-client gzip tar
-      while true; do
-        STAMP=\$(date -u +%Y%m%dT%H%M%SZ)
-        BACKUP_DIR=/backups/\$STAMP
-        mkdir -p \$BACKUP_DIR
-
-        # Backup Postgres
-        pg_dump -h aureusrp-db -U aureusrp_user -d aureusrp_db | gzip -9 > \$BACKUP_DIR/aureusrp-postgres.sql.gz
-
-        # Backup ERPNext sites
-        tar czf \$BACKUP_DIR/aureusrp-sites.tar.gz /sites 2>/dev/null || true
-
-        echo \"✅ Backup em \$BACKUP_DIR\"
-
-        # Manter últimos 30 dias
-        find /backups -type d -mtime +30 -exec rm -rf {} + 2>/dev/null || true
-
-        # Daily backup
-        sleep 86400
-      done
-      "
+    environment:
+      PGPASSWORD: ${AUREUSRP_DB_PASSWORD}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        apk add --no-cache postgresql-client gzip tar
+        while true; do
+          STAMP=$$(date -u +%Y%m%dT%H%M%SZ)
+          BACKUP_DIR=/backups/$$STAMP
+          mkdir -p $$BACKUP_DIR
+          pg_dump -h aureusrp-db -U aureusrp_user -d aureusrp_db | gzip -9 > $$BACKUP_DIR/aureusrp-postgres.sql.gz || true
+          tar czf $$BACKUP_DIR/aureusrp-sites.tar.gz /sites 2>/dev/null || true
+          echo "Backup concluido em $$BACKUP_DIR"
+          find /backups -type d -mtime +30 -exec rm -rf {} + 2>/dev/null || true
+          sleep 86400
+        done
 
     volumes:
       - aureusrp-db-data:/backups-source:ro
@@ -178,4 +174,6 @@ volumes:
 
 networks:
   focussdev-network:
+    external: true
+  easypanel:
     external: true

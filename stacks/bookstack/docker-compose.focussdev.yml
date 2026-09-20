@@ -1,0 +1,7 @@
+# Override do Focussdev Hub – adiciona middleware para permitir embedding via iframe
+services:
+  bookstack:
+    labels:
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.X-Frame-Options: ""
+      traefik.http.middlewares.focussdev-frame.headers.customresponseheaders.Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space https://*.focussdev.space https://focussdev-hub.pages.dev"
+      traefik.http.routers.bookstack.middlewares: focussdev-frame

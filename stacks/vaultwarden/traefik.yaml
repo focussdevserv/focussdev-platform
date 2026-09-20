@@ -12,11 +12,20 @@ http:
       priority: 100
       entryPoints:
         - https
+      middlewares:
+        - focussdev-frame-policy
       service: focuss-vaultwarden
       tls:
         certResolver: letsencrypt
+  middlewares:
+    focussdev-frame-policy:
+      headers:
+        customResponseHeaders:
+          X-Frame-Options: ""
+          Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space https://*.focussdev.space https://focussdev-hub.pages.dev"
   services:
     focuss-vaultwarden:
       loadBalancer:
         servers:
           - url: http://focuss-vaultwarden:80
+
