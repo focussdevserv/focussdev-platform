@@ -6,20 +6,23 @@
 4. Vaultwarden
 5. FOCUSSDEV HUB (frontend estático no Cloudflare Pages)
 6. Supabase Self-Hosted
-7. n8n
-8. Evolution API
-9. DeskcommCRM
-10. AureusERP
-11. Documenso
-12. Mercado Pago
-13. Plane
-14. Forgejo
-15. BookStack
-16. FreeScout
-17. Integrações complementares
-18. Validação ponta a ponta
+7. DeskcommCRM + WAHA
+8. AureusERP
+9. Documenso
+10. Mercado Pago
+11. Plane
+12. Forgejo
+13. FreeScout
+14. BookStack
+15. n8n
+16. Integrações complementares (Resend, Google Calendar, BrasilAPI/ReceitaWS e NFS-e)
+17. Validação ponta a ponta
 
 Uma stack só avança quando seu checkpoint registra testes, limitações e problemas pendentes.
+
+O WAHA é o provedor de WhatsApp do DeskcommCRM e faz parte do checkpoint da própria stack.
+A instalação Evolution API que já existe na VPS pertence a outro projeto protegido: ela não será
+removida, reutilizada nem contabilizada como componente do novo Focussdev.
 
 ## Decisão de hospedagem do Hub
 

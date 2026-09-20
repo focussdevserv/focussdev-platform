@@ -10,3 +10,5 @@ data/
 backups/
 runtime/
 .wrangler/
+.playwright-cli/
+output/playwright/

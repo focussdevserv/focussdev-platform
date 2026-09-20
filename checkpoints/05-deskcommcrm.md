@@ -3,6 +3,10 @@
 Data: 2026-09-20
 Estado: bloqueado por dependência externa obrigatória
 
+> Checkpoint histórico, superado pelo `06-supabase-deskcomm.md`: o Supabase dedicado e a stack
+> DeskcommCRM foram instalados depois deste bloqueio. Este arquivo preserva a evidência da decisão
+> de não reutilizar o banco do `credmaisapp`.
+
 ## 1. O que foi analisado
 
 - Repositório upstream `melgarafael/DeskcommCRM` clonado somente para leitura em `runtime/deskcommcrm`.
