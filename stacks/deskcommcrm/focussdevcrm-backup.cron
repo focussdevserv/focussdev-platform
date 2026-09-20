@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# /etc/cron.d entry: schedule follows the host timezone (03:15 UTC only if host is UTC).
+15 3 * * * root /bin/bash -o pipefail -c '/bin/bash /opt/focussdev/stacks/deskcommcrm/backup.sh 2>&1 | logger -t focussdevcrm-backup'

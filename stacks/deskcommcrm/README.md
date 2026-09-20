@@ -43,3 +43,16 @@ funcional completa. O estado verificável mais recente está em
 
 As chaves permanecem somente na VPS e nunca aparecem no Git ou no chat. Não usar o Supabase do
 `credmaisapp` nem compartilhar o Postgres com outra aplicação.
+
+## Override da VPS Focussdev
+
+`docker-compose.focussdev.yml` liga a stack às redes exclusivas já existentes e adapta os
+entrypoints do Traefik da Hostinger para `http`/`https`. Todo `up -d` nesta VPS usa os três arquivos:
+
+```text
+docker compose -p focussdevcrm -f docker-compose.prod.yml -f docker-compose.traefik.yml -f docker-compose.focussdev.yml --env-file .env up -d --no-deps app
+```
+
+O `-p focussdevcrm` é obrigatório: sem ele o Compose assume `deskcommcrm` pelo nome do diretório e
+tenta criar uma segunda cópia da stack. O `--no-deps` limita a operação ao `app`; só recrie worker,
+scheduler, WAHA ou Redis em uma etapa específica, com backup e checkpoint.

@@ -1,0 +1,32 @@
+services:
+  app:
+    networks:
+      - internal
+      - proxy
+      - supabase
+    labels:
+      traefik.docker.network: easypanel
+      traefik.http.routers.deskcomm.entrypoints: https
+      traefik.http.routers.deskcomm-waha-block.entrypoints: https
+      traefik.http.routers.deskcomm-http.entrypoints: http
+  worker:
+    networks:
+      - internal
+      - supabase
+  scheduler:
+    networks:
+      - internal
+      - supabase
+  waha:
+    environment:
+      # O WAHA usa o formato sha512:<digest>; o app continua usando a chave
+      # plaintext apenas no header X-Api-Key.
+      WAHA_API_KEY: "sha512:3f9d8095412142e788b96302e4329acbaf503c821f8bee3ca8b73378a3e1f244e0b6ed38496a9eab8392eb7e05197f42c2998f98dcaf7534f587ca8593943943"
+
+networks:
+  proxy:
+    external: true
+    name: easypanel
+  supabase:
+    external: true
+    name: focussdev_supabase_default
