@@ -1,0 +1,78 @@
+version: '3.9'
+
+services:
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:latest
+    container_name: focussdev_forgejo
+    restart: unless-stopped
+
+    environment:
+      GITEA_WORK_DIR: /data/git
+      GITEA_CUSTOM: /data/gitea
+      USER_UID: 1000
+      USER_GID: 1000
+
+      DB_TYPE: postgres
+      DB_HOST: forgejo-db:5432
+      DB_USER: forgejo_user
+      DB_PASSWD: ${FORGEJO_DB_PASSWORD}
+      DB_NAME: forgejo_db
+
+      DOMAIN: git.focussdev.space
+      SSH_DOMAIN: git.focussdev.space
+      ROOT_URL: https://git.focussdev.space
+
+      OAUTH_ENABLE: "true"
+      OAUTH_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OAUTH_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+
+    ports:
+      - "3004:3000"
+      - "2222:22"
+
+    volumes:
+      - forgejo-data:/data
+
+    depends_on:
+      - forgejo-db
+
+    networks:
+      - focussdev-network
+
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.forgejo.rule: Host(`git.focussdev.space`)
+      traefik.http.routers.forgejo.entrypoints: websecure
+      traefik.http.routers.forgejo.tls.certresolver: letsencrypt
+      traefik.http.services.forgejo.loadbalancer.server.port: "3000"
+
+  forgejo-db:
+    image: postgres:17.6-alpine
+    container_name: focussdev_forgejo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: forgejo_user
+      POSTGRES_PASSWORD: ${FORGEJO_DB_PASSWORD}
+      POSTGRES_DB: forgejo_db
+    volumes:
+      - forgejo-db-data:/var/lib/postgresql/data
+    networks:
+      - focussdev-network
+
+volumes:
+  forgejo-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/forgejo/data
+  forgejo-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/forgejo/postgres
+
+networks:
+  focussdev-network:
+    external: true

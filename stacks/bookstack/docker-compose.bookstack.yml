@@ -1,0 +1,82 @@
+version: '3.9'
+
+services:
+  bookstack:
+    image: solidnerd/bookstack:latest
+    container_name: focussdev_bookstack
+    restart: unless-stopped
+
+    environment:
+      APP_URL: https://docs.focussdev.space
+      APP_NAME: "Focussdev Docs"
+      APP_KEY: base64:${BOOKSTACK_APP_KEY}
+
+      DB_HOST: bookstack-db
+      DB_USER: bookstack_user
+      DB_PASS: ${BOOKSTACK_DB_PASSWORD}
+      DB_DATABASE: bookstack_db
+
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+      OIDC_DISCOVERY_URL: https://auth.focussdev.space/.well-known/openid-configuration
+
+      APP_LOG: single
+      CACHE_DRIVER: file
+
+    ports:
+      - "3005:80"
+
+    volumes:
+      - bookstack-uploads:/app/public/uploads
+      - bookstack-storage:/app/storage
+
+    depends_on:
+      - bookstack-db
+
+    networks:
+      - focussdev-network
+
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.bookstack.rule: Host(`wiki.focussdev.space`)
+      traefik.http.routers.bookstack.entrypoints: websecure
+      traefik.http.routers.bookstack.tls.certresolver: letsencrypt
+      traefik.http.services.bookstack.loadbalancer.server.port: "80"
+
+  bookstack-db:
+    image: mariadb:latest
+    container_name: focussdev_bookstack-db
+    restart: unless-stopped
+    environment:
+      MYSQL_USER: bookstack_user
+      MYSQL_PASSWORD: ${BOOKSTACK_DB_PASSWORD}
+      MYSQL_DATABASE: bookstack_db
+      MYSQL_ROOT_PASSWORD: ${BOOKSTACK_DB_ROOT_PASSWORD}
+    volumes:
+      - bookstack-db-data:/var/lib/mysql
+    networks:
+      - focussdev-network
+
+volumes:
+  bookstack-uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/bookstack/uploads
+  bookstack-storage:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/bookstack/storage
+  bookstack-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/bookstack/mariadb
+
+networks:
+  focussdev-network:
+    external: true

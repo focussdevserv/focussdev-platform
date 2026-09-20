@@ -1,0 +1,100 @@
+version: '3.9'
+
+services:
+  documenso:
+    image: documenso/documenso:latest
+    container_name: focussdev_documenso
+    restart: unless-stopped
+
+    environment:
+      DATABASE_URL: postgresql://documenso_user:${DOCUMENSO_DB_PASSWORD}@documenso-db:5432/documenso_db
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: https://docs.focussdev.space
+
+      # OIDC Authentik
+      OAUTH_GOOGLE_ID: ${OIDC_CLIENT_ID}
+      OAUTH_GOOGLE_SECRET: ${OIDC_CLIENT_SECRET}
+
+      # Supabase Storage
+      STORAGE_URL: https://supabase.focussdev.space/storage/v1
+      STORAGE_KEY: ${SUPABASE_ANON_KEY}
+
+      # Assinatura eletrônica
+      SIGNING_KEY: ${DOCUMENSO_SIGNING_KEY}
+
+      NODE_ENV: production
+      LOG_LEVEL: info
+
+    ports:
+      - "3002:3000"
+
+    volumes:
+      - documenso-data:/app/.next/static
+      - documenso-uploads:/app/public/uploads
+
+    depends_on:
+      - documenso-db
+
+    networks:
+      - focussdev-network
+
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.documenso.rule: Host(`docs.focussdev.space`)
+      traefik.http.routers.documenso.entrypoints: websecure
+      traefik.http.routers.documenso.tls.certresolver: letsencrypt
+      traefik.http.services.documenso.loadbalancer.server.port: "3000"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  documenso-db:
+    image: postgres:17.6-alpine
+    container_name: focussdev_documenso-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: documenso_user
+      POSTGRES_PASSWORD: ${DOCUMENSO_DB_PASSWORD}
+      POSTGRES_DB: documenso_db
+
+    volumes:
+      - documenso-db-data:/var/lib/postgresql/data
+
+    networks:
+      - focussdev-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U documenso_user -d documenso_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  documenso-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/documenso/app
+
+  documenso-uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/documenso/uploads
+
+  documenso-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/documenso/postgres
+
+networks:
+  focussdev-network:
+    external: true

@@ -1,0 +1,84 @@
+version: '3.9'
+
+services:
+  plane:
+    image: plane/plane:latest
+    container_name: focussdev_plane
+    restart: unless-stopped
+
+    environment:
+      DATABASE_URL: postgresql://plane_user:${PLANE_DB_PASSWORD}@plane-db:5432/plane_db
+      REDIS_URL: redis://plane-redis:6379
+      SECRET_KEY: ${PLANE_SECRET_KEY}
+
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+      OIDC_DISCOVERY_URL: https://auth.focussdev.space/.well-known/openid-configuration
+
+      NODE_ENV: production
+
+    ports:
+      - "3003:8000"
+
+    volumes:
+      - plane-data:/app/data
+
+    depends_on:
+      - plane-db
+      - plane-redis
+
+    networks:
+      - focussdev-network
+
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.plane.rule: Host(`projetos.focussdev.space`)
+      traefik.http.routers.plane.entrypoints: websecure
+      traefik.http.routers.plane.tls.certresolver: letsencrypt
+      traefik.http.services.plane.loadbalancer.server.port: "8000"
+
+  plane-db:
+    image: postgres:17.6-alpine
+    container_name: focussdev_plane-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: plane_user
+      POSTGRES_PASSWORD: ${PLANE_DB_PASSWORD}
+      POSTGRES_DB: plane_db
+    volumes:
+      - plane-db-data:/var/lib/postgresql/data
+    networks:
+      - focussdev-network
+
+  plane-redis:
+    image: redis:7-alpine
+    container_name: focussdev_plane-redis
+    restart: unless-stopped
+    volumes:
+      - plane-redis-data:/data
+    networks:
+      - focussdev-network
+
+volumes:
+  plane-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/plane/app
+  plane-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/plane/postgres
+  plane-redis-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/plane/redis
+
+networks:
+  focussdev-network:
+    external: true
