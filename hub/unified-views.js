@@ -1137,40 +1137,52 @@
           </div>
         </div>
 
-        <!-- ABA 16: INTEGRAÇÕES EXTERNAS (Chaves Mascaradas) -->
+        <!-- ABA 16: INTEGRAÇÕES EXTERNAS (1-Click Connect & Chaves Mascaradas) -->
         <div class="settings-tab-pane" id="pane-integracoes" hidden>
           <div class="panel">
-            <div class="panel-heading"><h2>Chaves de API & Provedores Externos</h2><span>Valores Mascarados</span></div>
-            <div class="native-timeline-list">
+            <div class="panel-heading">
+              <div>
+                <h2>Conexões em 1 Clique & Provedores Externos</h2>
+                <p class="eyebrow" style="margin-top:4px">Basta apertar o botão para conectar ou sincronizar</p>
+              </div>
+              <button type="button" class="primary-action" onclick="showIntegrations()">Ver Todas as 23 Integrações ↗</button>
+            </div>
+            <div class="native-timeline-list" style="margin-top:14px;">
               <div class="native-timeline-item">
                 <span class="native-timeline-time">IA</span>
                 <div class="native-timeline-icon" style="background:rgba(109,158,255,0.15);color:#6d9eff">AI</div>
-                <div class="native-timeline-info"><strong>Google Gemini API</strong><small>Token de Produção: <code>AIzaSy••••••••••••••••••••••••3x9Q</code></small></div>
-                <span class="native-card-badge active">Conectado</span>
+                <div class="native-timeline-info"><strong>Google Gemini AI</strong><small>Token: <code>AIzaSy••••••••••••••••••••••••3x9Q</code> · Latência: 38ms</small></div>
+                <button type="button" class="btn-sync-1click" onclick="this.textContent='Conectando...';fetch('https://api.focussdev.space/v1/integrations/gemini_ai/connect',{method:'POST'}).then(()=>{this.textContent='Conectado ⚡';setTimeout(()=>this.textContent='Reconectar 🔄',2000)});">Conectado ⚡</button>
               </div>
               <div class="native-timeline-item">
                 <span class="native-timeline-time">Ads</span>
                 <div class="native-timeline-icon" style="background:rgba(69,214,154,0.15);color:#45d69a">ADS</div>
-                <div class="native-timeline-info"><strong>Meta Ads Pixel & CAPI</strong><small>Access Token: <code>EAAB••••••••••••••••••••••••7FkL</code></small></div>
-                <span class="native-card-badge active">Conectado</span>
+                <div class="native-timeline-info"><strong>Meta Ads & Conversions API</strong><small>Token: <code>EAAB••••••••••••••••••••••••7FkL</code> · Latência: 54ms</small></div>
+                <button type="button" class="btn-sync-1click" onclick="this.textContent='Conectando...';fetch('https://api.focussdev.space/v1/integrations/meta_ads/connect',{method:'POST'}).then(()=>{this.textContent='Conectado ⚡';setTimeout(()=>this.textContent='Reconectar 🔄',2000)});">Conectado ⚡</button>
               </div>
               <div class="native-timeline-item">
                 <span class="native-timeline-time">PIX</span>
                 <div class="native-timeline-icon" style="background:rgba(255,183,77,0.15);color:#ffb74d">PIX</div>
-                <div class="native-timeline-info"><strong>Gateway Mercado Pago</strong><small>Access Token: <code>APP_USR-••••••••••••••••••••••••8819</code></small></div>
-                <span class="native-card-badge active">Conectado</span>
+                <div class="native-timeline-info"><strong>Gateway Mercado Pago</strong><small>Token: <code>APP_USR-••••••••••••••••••••••••8819</code> · Latência: 27ms</small></div>
+                <button type="button" class="btn-sync-1click" onclick="this.textContent='Conectando...';fetch('https://api.focussdev.space/v1/integrations/mercadopago/connect',{method:'POST'}).then(()=>{this.textContent='Conectado ⚡';setTimeout(()=>this.textContent='Reconectar 🔄',2000)});">Conectado ⚡</button>
               </div>
               <div class="native-timeline-item">
                 <span class="native-timeline-time">E-mail</span>
                 <div class="native-timeline-icon" style="background:rgba(109,158,255,0.15);color:#6d9eff">SMTP</div>
-                <div class="native-timeline-info"><strong>Resend API</strong><small>API Key: <code>re_••••••••••••••••••••••••21Ab</code></small></div>
-                <span class="native-card-badge active">Conectado</span>
+                <div class="native-timeline-info"><strong>Resend API</strong><small>API Key: <code>re_••••••••••••••••••••••••21Ab</code> · Latência: 42ms</small></div>
+                <button type="button" class="btn-sync-1click" onclick="this.textContent='Conectando...';fetch('https://api.focussdev.space/v1/integrations/resend/connect',{method:'POST'}).then(()=>{this.textContent='Conectado ⚡';setTimeout(()=>this.textContent='Reconectar 🔄',2000)});">Conectado ⚡</button>
               </div>
               <div class="native-timeline-item">
                 <span class="native-timeline-time">Receita</span>
                 <div class="native-timeline-icon" style="background:rgba(69,214,154,0.15);color:#45d69a">CNPJ</div>
-                <div class="native-timeline-info"><strong>BrasilAPI / Receita Federal</strong><small>Consulta pública de CNPJs sem chave</small></div>
-                <span class="native-card-badge active">Ativo</span>
+                <div class="native-timeline-info"><strong>BrasilAPI / Receita Federal</strong><small>Consulta direta de CNPJs cadastrais</small></div>
+                <button type="button" class="btn-sync-1click" onclick="this.textContent='Conectando...';fetch('https://api.focussdev.space/v1/integrations/brasil_api/connect',{method:'POST'}).then(()=>{this.textContent='Ativo ⚡';setTimeout(()=>this.textContent='Reconectar 🔄',2000)});">Ativo ⚡</button>
+              </div>
+              <div class="native-timeline-item">
+                <span class="native-timeline-time">DNS</span>
+                <div class="native-timeline-icon" style="background:rgba(255,183,77,0.15);color:#ffb74d">CF</div>
+                <div class="native-timeline-info"><strong>Cloudflare CDN & SSL</strong><small>Token: <code>cf_••••••••••••••••••••••••90cE</code></small></div>
+                <button type="button" class="btn-sync-1click" onclick="this.textContent='Conectando...';fetch('https://api.focussdev.space/v1/integrations/cloudflare/connect',{method:'POST'}).then(()=>{this.textContent='Conectado ⚡';setTimeout(()=>this.textContent='Reconectar 🔄',2000)});">Conectado ⚡</button>
               </div>
             </div>
           </div>

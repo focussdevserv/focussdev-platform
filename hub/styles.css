@@ -185,8 +185,53 @@ h1 { margin-bottom: 9px; font-size: clamp(2rem, 4vw, 3.15rem); line-height: 1; l
 .integration-copy small, .integration-meta small { color: var(--faint); font-size: .55rem; }
 .integration-meta strong { font-size: .63rem; }
 .integration-status { padding: 6px 8px; color: var(--faint); background: rgba(255,255,255,.035); border-radius: 99px; font-size: .56rem; }
-.integration-card button { padding: 8px 9px; color: var(--faint); border: 1px solid var(--line); background: transparent; border-radius: 8px; font-size: .58rem; }
+.integration-card button { padding: 8px 9px; color: var(--faint); border: 1px solid var(--line); background: transparent; border-radius: 8px; font-size: .58rem; cursor: pointer; transition: all 120ms ease; }
 .integration-card button:disabled { cursor: not-allowed; opacity: .65; }
+
+.btn-connect-1click {
+  background: rgba(69, 214, 154, 0.16) !important;
+  color: #45d69a !important;
+  border: 1px solid rgba(69, 214, 154, 0.45) !important;
+  font-weight: 750 !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 0.64rem !important;
+  box-shadow: 0 0 10px rgba(69, 214, 154, 0.15);
+}
+
+.btn-connect-1click:hover {
+  background: #45d69a !important;
+  color: #050b14 !important;
+  box-shadow: 0 0 16px rgba(69, 214, 154, 0.5) !important;
+}
+
+.btn-disconnect-1click {
+  background: rgba(248, 113, 113, 0.08) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(248, 113, 113, 0.3) !important;
+  font-weight: 600 !important;
+  padding: 6px 9px !important;
+  font-size: 0.6rem !important;
+}
+
+.btn-disconnect-1click:hover {
+  background: rgba(248, 113, 113, 0.25) !important;
+  color: #fff !important;
+}
+
+.btn-sync-1click {
+  background: rgba(109, 158, 255, 0.12) !important;
+  color: #6d9eff !important;
+  border: 1px solid rgba(109, 158, 255, 0.35) !important;
+  font-weight: 650 !important;
+  padding: 6px 10px !important;
+  font-size: 0.62rem !important;
+}
+
+.btn-sync-1click:hover {
+  background: rgba(109, 158, 255, 0.25) !important;
+  color: #fff !important;
+}
 
 .command-dialog { width: min(580px, calc(100% - 28px)); padding: 0; color: var(--text); border: 1px solid var(--line-strong); background: var(--surface); border-radius: 15px; box-shadow: 0 30px 90px rgba(0,0,0,.55); }
 .command-dialog::backdrop { background: rgba(3,5,8,.72); backdrop-filter: blur(5px); }

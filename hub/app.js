@@ -903,36 +903,174 @@ const commands = [
   { label: "Auditoria Geral", area: "Focussdev Core · Config", action: () => showNative("auditoria") }
 ];
 
-const integrationGroups = [
-  ["Comercial", [["DeskcommCRM", "CRM"], ["Documenso", "DOC"]]],
-  ["Financeiro", [["AureusERP", "ERP"], ["Mercado Pago", "MP"], ["NFS-e", "NF"]]],
-  ["Desenvolvimento", [["Plane", "PL"], ["Forgejo", "GIT"], ["GitHub", "GH"]]],
-  ["Marketing", [["Meta", "META"], ["Google Ads", "ADS"]]],
-  ["Comunicação", [["WAHA", "WA"], ["Evolution API dedicada", "EV"], ["Resend", "RE"], ["Google Calendar", "GC"]]],
-  ["Suporte", [["FreeScout", "FS"]]],
-  ["Infraestrutura", [["Supabase", "DB"], ["Uptime Kuma", "UP"], ["BookStack", "BS"]]],
-  ["Serviços externos", [["BrasilAPI", "BR"], ["ReceitaWS", "RWS"]]],
-];
+const API_INTEGRATIONS_BASE = "https://api.focussdev.space/v1";
 
-function renderIntegrationCatalog() {
+async function renderIntegrationCatalog() {
   const root = document.querySelector("#integration-groups");
   if (!root) return;
-  root.replaceChildren();
-  integrationGroups.forEach(([groupName, integrations]) => {
-    const section = document.createElement("section");
-    section.className = "integration-group";
-    const title = document.createElement("h2");
-    title.textContent = groupName;
-    section.append(title);
-    integrations.forEach(([name, symbol]) => {
-      const card = document.createElement("article");
-      card.className = "integration-card";
-      const requirement = name === "Uptime Kuma" ? "Webhook oficial a configurar" : "Versão e API oficial a validar";
-      card.innerHTML = `<span class="integration-symbol">${symbol}</span><span class="integration-copy"><strong>${name}</strong><small>${requirement}</small></span><span class="integration-status">Desconectado</span><span class="integration-meta"><small>Última sincronização</small><strong>—</strong></span><span class="integration-meta"><small>Erros</small><strong>0</strong></span><button type="button" disabled>Testar conexão</button>`;
-      section.append(card);
+
+  try {
+    const res = await fetch(`${API_INTEGRATIONS_BASE}/integrations`, { cache: "no-store" });
+    if (!res.ok) throw new Error("Falha ao carregar integrações");
+    const { data } = await res.json();
+    if (!Array.isArray(data)) return;
+
+    // Atualizar resumo no topo
+    const connectedCount = data.filter(i => i.status === "connected").length;
+    const disconnectedCount = data.filter(i => i.status !== "connected").length;
+    const summaryArticles = document.querySelectorAll(".integration-summary article");
+    if (summaryArticles.length >= 4) {
+      summaryArticles[0].querySelector("strong").textContent = connectedCount;
+      summaryArticles[1].querySelector("strong").textContent = disconnectedCount;
+      summaryArticles[2].querySelector("strong").textContent = "0";
+      summaryArticles[3].querySelector("strong").textContent = "Agora";
+    }
+
+    const statePill = document.querySelector(".integration-service-state");
+    if (statePill) {
+      statePill.innerHTML = `<i></i>${connectedCount} integrações ativas em 1 clique`;
+      statePill.style.color = "var(--green)";
+      statePill.style.background = "var(--green-soft)";
+    }
+
+    // Agrupar por categoria
+    const groups = {};
+    data.forEach(item => {
+      const cat = item.category || "Outros";
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(item);
     });
-    root.append(section);
-  });
+
+    root.replaceChildren();
+
+    Object.entries(groups).forEach(([groupName, integrations]) => {
+      const section = document.createElement("section");
+      section.className = "integration-group";
+      const title = document.createElement("h2");
+      title.textContent = groupName;
+      section.append(title);
+
+      integrations.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "integration-card";
+        card.id = `card-int-${item.key}`;
+
+        const isConn = item.status === "connected";
+        const dateStr = item.last_sync_at ? new Date(item.last_sync_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
+        const latencyStr = item.latency_ms ? `${item.latency_ms}ms` : '—';
+
+        card.innerHTML = `
+          <span class="integration-symbol">${item.symbol || 'API'}</span>
+          <span class="integration-copy">
+            <strong>${item.name}</strong>
+            <small>${item.target_url || 'Endpoint Oficial'}</small>
+          </span>
+          <span class="integration-status status-badge-live ${isConn ? 'online' : 'offline'}" id="status-badge-${item.key}">
+            <span class="pulse-dot"></span>
+            <span class="status-text">${isConn ? 'Conectado' : 'Desconectado'}</span>
+          </span>
+          <span class="integration-meta">
+            <small>Sincronização</small>
+            <strong id="sync-time-${item.key}">${dateStr} (${latencyStr})</strong>
+          </span>
+          <span class="integration-meta">
+            <small>Erros</small>
+            <strong>${item.error_count || 0}</strong>
+          </span>
+          <div style="display:flex;gap:6px;justify-content:flex-end;" id="action-btns-${item.key}">
+            ${isConn ? `
+              <button type="button" class="btn-sync-1click" data-action="sync" data-key="${item.key}" title="Sincronizar dados">Sincronizar 🔄</button>
+              <button type="button" class="btn-disconnect-1click" data-action="disconnect" data-key="${item.key}" title="Desconectar">Desconectar</button>
+            ` : `
+              <button type="button" class="btn-connect-1click" data-action="connect" data-key="${item.key}" title="Conectar em 1 clique">Conectar com 1 Clique ⚡</button>
+            `}
+          </div>
+        `;
+
+        // Handlers dos botões 1-clique
+        const setupCardEvents = (cardElement) => {
+          const btnConnect = cardElement.querySelector('[data-action="connect"]');
+          const btnSync = cardElement.querySelector('[data-action="sync"]');
+          const btnDisconnect = cardElement.querySelector('[data-action="disconnect"]');
+
+          if (btnConnect) {
+            btnConnect.onclick = async () => {
+              btnConnect.disabled = true;
+              btnConnect.textContent = "Conectando...";
+              try {
+                const connRes = await fetch(`${API_INTEGRATIONS_BASE}/integrations/${item.key}/connect`, { method: "POST" });
+                const connData = await connRes.json();
+                if (connData.success) {
+                  item.status = "connected";
+                  item.last_sync_at = connData.data.last_sync_at;
+                  item.latency_ms = connData.data.latency_ms;
+                  renderIntegrationCatalog();
+                } else {
+                  alert("Erro ao conectar: " + (connData.message || "Tente novamente."));
+                  btnConnect.disabled = false;
+                  btnConnect.textContent = "Conectar com 1 Clique ⚡";
+                }
+              } catch {
+                alert("Erro de conexão com o servidor.");
+                btnConnect.disabled = false;
+                btnConnect.textContent = "Conectar com 1 Clique ⚡";
+              }
+            };
+          }
+
+          if (btnSync) {
+            btnSync.onclick = async () => {
+              btnSync.disabled = true;
+              btnSync.textContent = "Sincronizando...";
+              try {
+                const syncRes = await fetch(`${API_INTEGRATIONS_BASE}/integrations/${item.key}/connect`, { method: "POST" });
+                const syncData = await syncRes.json();
+                if (syncData.success) {
+                  const syncTimeEl = cardElement.querySelector(`#sync-time-${item.key}`);
+                  if (syncTimeEl) {
+                    const now = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    syncTimeEl.textContent = `${now} (${syncData.data.latency_ms}ms)`;
+                  }
+                }
+              } catch {
+                // silencioso
+              } finally {
+                btnSync.disabled = false;
+                btnSync.textContent = "Sincronizar 🔄";
+              }
+            };
+          }
+
+          if (btnDisconnect) {
+            btnDisconnect.onclick = async () => {
+              if (!confirm(`Deseja realmente desconectar a integração com ${item.name}?`)) return;
+              btnDisconnect.disabled = true;
+              btnDisconnect.textContent = "Desconectando...";
+              try {
+                const discRes = await fetch(`${API_INTEGRATIONS_BASE}/integrations/${item.key}/disconnect`, { method: "POST" });
+                const discData = await discRes.json();
+                if (discData.success) {
+                  item.status = "disconnected";
+                  renderIntegrationCatalog();
+                }
+              } catch {
+                alert("Erro de conexão ao desconectar.");
+                btnDisconnect.disabled = false;
+                btnDisconnect.textContent = "Desconectar";
+              }
+            };
+          }
+        };
+
+        setupCardEvents(card);
+        section.append(card);
+      });
+
+      root.append(section);
+    });
+  } catch (err) {
+    root.innerHTML = `<p style="padding:24px;text-align:center;color:var(--red);">Erro ao carregar integrações da API.</p>`;
+  }
 }
 
 renderIntegrationCatalog();

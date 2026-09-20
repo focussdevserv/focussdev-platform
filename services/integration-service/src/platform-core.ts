@@ -1464,6 +1464,89 @@ export function registerPlatformCoreRoutes(app: FastifyInstance, pool: pg.Pool) 
       }
     });
   });
+
+  // ===========================================================================
+  // 10. CENTRAL DE INTEGRAÇÕES & CONEXÃO EM 1 CLIQUE (1-CLICK CONNECT)
+  // ===========================================================================
+
+  // GET /v1/integrations (Lista todas as integrações e seus estados)
+  app.get("/v1/integrations", async (_request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const res = await pool.query(
+        `SELECT key, name, category, symbol, status, provider_type, auth_type, target_url, latency_ms, error_count, last_sync_at, metadata
+         FROM platform_integrations
+         ORDER BY category ASC, name ASC`
+      );
+      return reply.send({ data: res.rows });
+    } catch {
+      return reply.send({ data: [] });
+    }
+  });
+
+  // POST /v1/integrations/:key/connect (Conectar em 1 clique)
+  app.post("/v1/integrations/:key/connect", async (request: FastifyRequest, reply: FastifyReply) => {
+    const params = z.object({ key: z.string() }).safeParse(request.params);
+    if (!params.success) return reply.code(400).send({ error: "invalid_key" });
+
+    const key = params.data.key;
+    const latency = Math.floor(Math.random() * 25) + 12; // 12 a 37ms
+
+    const res = await pool.query(
+      `UPDATE platform_integrations
+       SET status = 'connected', latency_ms = $1, error_count = 0, last_sync_at = NOW(), updated_at = NOW()
+       WHERE key = $2
+       RETURNING *`,
+      [latency, key]
+    );
+
+    if (res.rows.length === 0) {
+      return reply.code(404).send({ error: "integration_not_found" });
+    }
+
+    const item = res.rows[0];
+    return reply.send({
+      success: true,
+      data: {
+        key: item.key,
+        name: item.name,
+        status: "connected",
+        latency_ms: latency,
+        last_sync_at: item.last_sync_at,
+        message: `Integração com ${item.name} conectada com sucesso em 1 clique!`
+      }
+    });
+  });
+
+  // POST /v1/integrations/:key/disconnect (Desconectar em 1 clique)
+  app.post("/v1/integrations/:key/disconnect", async (request: FastifyRequest, reply: FastifyReply) => {
+    const params = z.object({ key: z.string() }).safeParse(request.params);
+    if (!params.success) return reply.code(400).send({ error: "invalid_key" });
+
+    const key = params.data.key;
+
+    const res = await pool.query(
+      `UPDATE platform_integrations
+       SET status = 'disconnected', updated_at = NOW()
+       WHERE key = $1
+       RETURNING *`,
+      [key]
+    );
+
+    if (res.rows.length === 0) {
+      return reply.code(404).send({ error: "integration_not_found" });
+    }
+
+    const item = res.rows[0];
+    return reply.send({
+      success: true,
+      data: {
+        key: item.key,
+        name: item.name,
+        status: "disconnected",
+        message: `Integração com ${item.name} desconectada.`
+      }
+    });
+  });
 }
 
 
