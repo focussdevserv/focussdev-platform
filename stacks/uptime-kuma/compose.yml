@@ -4,6 +4,8 @@ services:
   uptime-kuma:
     image: docker.io/louislam/uptime-kuma:2.5.5
     restart: unless-stopped
+    environment:
+      UPTIME_KUMA_DISABLE_FRAME_SAMEORIGIN: "true"
     ports:
       - 127.0.0.1:3001:3001
     volumes:

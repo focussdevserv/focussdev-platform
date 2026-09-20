@@ -11,9 +11,16 @@ http:
       rule: Host(`status.focussdev.space`)
       entryPoints:
         - https
+      middlewares:
+        - focuss-uptime-kuma-frame-policy
       service: focuss-uptime-kuma
       tls:
         certResolver: letsencrypt
+  middlewares:
+    focuss-uptime-kuma-frame-policy:
+      headers:
+        customResponseHeaders:
+          Content-Security-Policy: "frame-ancestors https://app.focussdev.space"
   services:
     focuss-uptime-kuma:
       loadBalancer:

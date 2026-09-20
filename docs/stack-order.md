@@ -14,7 +14,7 @@
 12. Forgejo
 13. FreeScout
 14. BookStack
-15. n8n
+15. Focussdev Integration Service
 16. Integrações complementares (Resend, Google Calendar, BrasilAPI/ReceitaWS e NFS-e)
 17. Validação ponta a ponta
 
@@ -23,6 +23,10 @@ Uma stack só avança quando seu checkpoint registra testes, limitações e prob
 O WAHA é o provedor de WhatsApp do DeskcommCRM e faz parte do checkpoint da própria stack.
 A instalação Evolution API que já existe na VPS pertence a outro projeto protegido: ela não será
 removida, reutilizada nem contabilizada como componente do novo Focussdev.
+
+O Focussdev não utiliza n8n. APIs e webhooks são coordenados pelo `Focussdev Integration Service`,
+com fila durável, idempotência, retries, dead-letter e auditoria próprios. Cada conector só é
+ativado depois da verificação da API ou webhook oficialmente disponível na versão instalada.
 
 ## Decisão de hospedagem do Hub
 

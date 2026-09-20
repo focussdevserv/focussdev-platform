@@ -17,13 +17,14 @@ flowchart LR
   H --> B[BookStack]
   H --> K[Uptime Kuma]
   H --> V[Vaultwarden]
-  C --> N[n8n / APIs / webhooks]
+  C --> N[Focussdev Integration Service]
   E --> N
   P --> N
   D --> N
   G --> N
   S --> N
   B --> N
+  K --> N
   N --> C
   N --> E
   N --> P
@@ -42,3 +43,6 @@ flowchart LR
   usam APIs, webhooks e identificadores externos, nunca escrita direta no banco de outra aplicação.
 - WhatsApp: o DeskcommCRM usa WAHA. A Evolution API existente na VPS pertence a outro projeto e
   permanece isolada.
+- Integrações: o `Focussdev Integration Service` recebe webhooks, persiste eventos antes do
+  processamento, aplica idempotência, retries com backoff e dead-letter, e expõe estado e logs em
+  `Configurações → Integrações`. O ecossistema não depende de n8n.

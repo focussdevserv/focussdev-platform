@@ -20,7 +20,7 @@ Status: concluído, funcional e publicado em HTTPS.
 
 - Rede externa `easypanel`, alias `focuss-uptime-kuma`.
 - Traefik → aplicação validado com HTTPS e WebSocket.
-- Webhook para n8n/FreeScout fica deliberadamente pendente até essas stacks existirem.
+- Webhook para o Focussdev Integration Service/FreeScout fica deliberadamente pendente até essas stacks existirem.
 
 ## 4. Banco e volumes
 
@@ -61,7 +61,7 @@ Status: concluído, funcional e publicado em HTTPS.
 ## 8. Problemas pendentes
 
 - Criar monitores somente após definir os endpoints reais das stacks instaladas.
-- Configurar destinatários e webhook para incidentes depois de n8n e FreeScout.
+- Configurar destinatários e webhook para incidentes depois do Focussdev Integration Service e FreeScout.
 - Habilitar API key para métricas somente quando houver consumidor real.
 - Capacidade restante da VPS: aproximadamente 3,0 GiB disponíveis, 2 vCPU e sem swap; medir novamente antes de cada stack.
 
@@ -75,11 +75,11 @@ Status: concluído, funcional e publicado em HTTPS.
 ## Living System Checklist
 
 1. Entrada: heartbeats dos monitores reais a serem cadastrados.
-2. Saída: notificações oficiais; futuramente webhook n8n → ticket FreeScout.
+2. Saída: notificações oficiais; futuramente webhook do Integration Service → ticket FreeScout.
 3. Registro: heartbeats, eventos e incidentes do próprio Kuma.
 4. Tela: dashboard, histórico, status pages e incidentes originais.
 5. Porta: `https://status.focussdev.space` e, futuramente, menu do Hub.
-6. Anti-morte: notificações e escalada; conexão final pendente de n8n/FreeScout.
+6. Anti-morte: notificações e escalada; conexão final pendente do Integration Service/FreeScout.
 7. Configuração: interface original completa do Kuma.
 8. Continuidade: incidente entrega contexto para humano; resolução retorna como recovery.
 9. Retorno: recovery encerra indisponibilidade; pós-incidente será documentado no BookStack.

@@ -4,261 +4,226 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#080b12" />
-    <meta
-      name="description"
-      content="Porta de entrada do ecossistema operacional Focussdev."
-    />
-    <title>Focussdev Hub</title>
+    <meta name="theme-color" content="#090c12" />
+    <meta name="description" content="Sistema operacional unificado da Focussdev." />
+    <title>Focussdev</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css?v=2" />
+    <link rel="stylesheet" href="/styles.css?v=3" />
+    <script src="/app.js?v=3" defer></script>
   </head>
   <body>
-    <a class="skip-link" href="#aplicacoes">Ir para as aplicações</a>
+    <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
 
-    <header class="topbar">
-      <a class="brand" href="/" aria-label="Focussdev Hub — início">
-        <span class="brand-mark" aria-hidden="true">F</span>
-        <span>
-          <strong>FOCUSSDEV</strong>
-          <small>HUB</small>
-        </span>
-      </a>
-
-      <div class="environment" aria-label="Ambiente atual">
-        <span class="environment-dot" aria-hidden="true"></span>
-        Ecossistema em implantação
-      </div>
-      <nav class="hub-nav" aria-label="Menu principal">
-        <a href="#meu-dia">Meu dia</a>
-        <a href="#aplicacoes">Aplicações</a>
-        <a href="https://auth.focussdev.space">Administração</a>
-      </nav>
-    </header>
-
-    <main>
-      <section class="hero" aria-labelledby="titulo">
-        <p class="eyebrow">CENTRAL OPERACIONAL</p>
-        <h1 id="titulo">Tudo o que move a Focussdev, em um só lugar.</h1>
-        <p class="hero-copy">
-          Entre nas aplicações originais do ecossistema. Cada área mantém seu
-          dashboard completo, seus recursos e seu ciclo independente de atualização.
-        </p>
-
-        <div class="legend" aria-label="Legenda dos módulos">
-          <span><i class="status-dot is-online" aria-hidden="true"></i>Disponível</span>
-          <span><i class="status-dot is-building" aria-hidden="true"></i>Em implantação</span>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
+        <div class="sidebar-head">
+          <button class="brand" type="button" data-route="home" aria-label="Ir para Meu dia">
+            <span class="brand-mark" aria-hidden="true">F</span>
+            <span class="brand-copy"><strong>FOCUSSDEV</strong><small>OPERAÇÃO</small></span>
+          </button>
+          <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Fechar menu">×</button>
         </div>
-      </section>
 
-      <section class="daily-panel" aria-labelledby="meu-dia-titulo">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">VISÃO GERAL</p>
-            <h2 id="meu-dia-titulo">Meu dia</h2>
+        <nav class="primary-nav" aria-label="Áreas do Focussdev">
+          <button class="nav-home is-active" type="button" data-route="home">
+            <span class="nav-icon" aria-hidden="true">⌂</span><span>Meu dia</span>
+          </button>
+
+          <section class="nav-group" data-group="crm">
+            <button class="nav-group-trigger" type="button" aria-expanded="true">
+              <span class="nav-group-title"><span class="nav-icon">CRM</span>CRM</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items">
+              <button type="button" data-planned="DeskcommCRM">Dashboard</button>
+              <button type="button" data-planned="DeskcommCRM">Leads</button>
+              <button type="button" data-planned="DeskcommCRM">Clientes</button>
+              <button type="button" data-planned="DeskcommCRM">Oportunidades</button>
+              <button type="button" data-planned="DeskcommCRM">Conversas</button>
+            </div>
+          </section>
+
+          <section class="nav-group" data-group="financeiro">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">$</span>Financeiro</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-planned="AureusERP">Dashboard</button>
+              <button type="button" data-planned="AureusERP">Receitas</button>
+              <button type="button" data-planned="AureusERP">Despesas</button>
+              <button type="button" data-planned="AureusERP">Contas a receber</button>
+              <button type="button" data-planned="AureusERP">Cobranças</button>
+            </div>
+          </section>
+
+          <section class="nav-group" data-group="projetos">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">PR</span>Projetos</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-planned="Plane">Dashboard</button>
+              <button type="button" data-planned="Plane">Projetos</button>
+              <button type="button" data-planned="Plane">Tarefas</button>
+              <button type="button" data-planned="Plane">Bugs</button>
+            </div>
+          </section>
+
+          <section class="nav-group" data-group="contratos">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">CT</span>Contratos</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-planned="Documenso">Documentos</button>
+              <button type="button" data-planned="Documenso">Propostas</button>
+              <button type="button" data-planned="Documenso">Contratos</button>
+              <button type="button" data-planned="Documenso">Assinaturas</button>
+            </div>
+          </section>
+
+          <section class="nav-group" data-group="suporte">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">SP</span>Suporte</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-planned="FreeScout">Tickets</button>
+              <button type="button" data-planned="FreeScout">Clientes</button>
+            </div>
+          </section>
+
+          <section class="nav-group" data-group="codigo">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">&lt;/&gt;</span>Código</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-planned="Forgejo">Repositórios</button>
+              <button type="button" data-planned="Forgejo">Issues</button>
+              <button type="button" data-planned="Forgejo">Releases</button>
+            </div>
+          </section>
+
+          <section class="nav-group" data-group="configuracoes">
+            <button class="nav-group-trigger" type="button" aria-expanded="false">
+              <span class="nav-group-title"><span class="nav-icon">CF</span>Configurações</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items" hidden>
+              <button type="button" data-planned="Focussdev Integration Service">Integrações</button>
+              <a href="https://auth.focussdev.space">Usuários e acesso <span aria-hidden="true">↗</span></a>
+              <a href="https://cofre.focussdev.space">Credenciais <span aria-hidden="true">↗</span></a>
+            </div>
+          </section>
+
+          <section class="nav-group" data-group="operacao">
+            <button class="nav-group-trigger" type="button" aria-expanded="true">
+              <span class="nav-group-title"><span class="nav-icon">OP</span>Operação</span><span class="chevron">⌄</span>
+            </button>
+            <div class="nav-group-items">
+              <button type="button" data-app="uptime" data-title="Monitoramento" data-url="https://status.focussdev.space/dashboard">Monitoramento <i class="live-dot"></i></button>
+              <a href="https://auth.focussdev.space">Identidade <span aria-hidden="true">↗</span></a>
+              <a href="https://cofre.focussdev.space">Cofre <span aria-hidden="true">↗</span></a>
+              <button type="button" data-planned="BookStack">Documentação</button>
+            </div>
+          </section>
+        </nav>
+
+        <div class="sidebar-foot">
+          <span class="avatar" aria-hidden="true">GL</span>
+          <span><strong>Gustavo Lopes</strong><small>Administrador</small></span>
+          <a href="https://auth.focussdev.space" aria-label="Abrir configurações de identidade">⚙</a>
+        </div>
+      </aside>
+
+      <div class="sidebar-scrim" id="sidebar-scrim" hidden></div>
+
+      <section class="workspace">
+        <header class="workspace-bar">
+          <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu">☰</button>
+          <div class="breadcrumbs"><span>Focussdev</span><i>/</i><strong id="page-title">Meu dia</strong></div>
+          <div class="workspace-actions">
+            <span class="environment"><i></i>Produção</span>
+            <button class="command-button" type="button" id="command-button"><span>Buscar área</span><kbd>Ctrl K</kbd></button>
           </div>
-          <p>Estado da implantação atual</p>
-        </div>
+        </header>
 
-        <div class="daily-grid">
-          <a class="daily-card" href="https://auth.focussdev.space">
-            <span class="daily-label"><i class="status-dot is-online" aria-hidden="true"></i>Identidade</span>
-            <strong>Authentik</strong>
-            <span>Administração de usuários, grupos e acesso.</span>
-          </a>
-          <a class="daily-card" href="https://status.focussdev.space">
-            <span class="daily-label"><i class="status-dot is-online" aria-hidden="true"></i>Operação</span>
-            <strong>Uptime Kuma</strong>
-            <span>Monitoramento e incidentes dos serviços.</span>
-          </a>
-          <a class="daily-card" href="https://cofre.focussdev.space">
-            <span class="daily-label"><i class="status-dot is-online" aria-hidden="true"></i>Acessos</span>
-            <strong>Vaultwarden</strong>
-            <span>Credenciais protegidas da operação.</span>
-          </a>
-          <article class="daily-card daily-card-next">
-            <span class="daily-label"><i class="status-dot is-building" aria-hidden="true"></i>Próxima etapa</span>
-            <strong>DeskcommCRM</strong>
-            <span>Instalação aguardando um Supabase dedicado.</span>
-          </article>
-        </div>
+        <main id="conteudo" class="workspace-content" tabindex="-1">
+          <section class="home-view" id="home-view" aria-labelledby="home-title">
+            <div class="welcome-row">
+              <div>
+                <p class="eyebrow" id="today-label">CENTRAL OPERACIONAL</p>
+                <h1 id="home-title">Bom trabalho, Gustavo.</h1>
+                <p>Seu ecossistema, suas equipes e a operação em um único lugar.</p>
+              </div>
+              <button class="primary-action" type="button" data-app="uptime" data-title="Monitoramento" data-url="https://status.focussdev.space/dashboard">Abrir monitoramento <span>→</span></button>
+            </div>
+
+            <section class="status-grid" aria-label="Resumo da plataforma">
+              <article class="status-card status-card-featured">
+                <div class="card-top"><span>Implantação do ecossistema</span><strong>23%</strong></div>
+                <div class="progress"><i style="width: 23%"></i></div>
+                <div class="card-bottom"><span><b>3</b> aplicações disponíveis</span><span>de 13 principais</span></div>
+              </article>
+              <article class="status-card">
+                <span class="metric-icon online">✓</span>
+                <div><strong>3</strong><span>serviços validados</span></div>
+              </article>
+              <article class="status-card">
+                <span class="metric-icon building">↻</span>
+                <div><strong>10</strong><span>em implantação</span></div>
+              </article>
+              <article class="status-card">
+                <span class="metric-icon shield">◆</span>
+                <div><strong>1</strong><span>VPS operacional</span></div>
+              </article>
+            </section>
+
+            <div class="dashboard-grid">
+              <section class="panel quick-panel">
+                <div class="panel-heading"><div><p class="eyebrow">ACESSO RÁPIDO</p><h2>Aplicações disponíveis</h2></div><span class="health-pill"><i></i>Operacional</span></div>
+                <div class="quick-apps">
+                  <a href="https://auth.focussdev.space" class="quick-app"><span class="app-symbol orange">ID</span><span><strong>Authentik</strong><small>Identidade e acesso</small></span><b>↗</b></a>
+                  <button type="button" class="quick-app" data-app="uptime" data-title="Monitoramento" data-url="https://status.focussdev.space/dashboard"><span class="app-symbol green">UP</span><span><strong>Uptime Kuma</strong><small>Monitoramento</small></span><b>→</b></button>
+                  <a href="https://cofre.focussdev.space" class="quick-app"><span class="app-symbol violet">VW</span><span><strong>Vaultwarden</strong><small>Senhas e acessos</small></span><b>↗</b></a>
+                </div>
+              </section>
+
+              <section class="panel rollout-panel">
+                <div class="panel-heading"><div><p class="eyebrow">AGORA</p><h2>Próxima entrega</h2></div><span class="stage-pill">Em configuração</span></div>
+                <div class="rollout-body"><span class="app-symbol blue">CRM</span><div><strong>DeskcommCRM + WAHA</strong><p>Publicação HTTPS, onboarding e conexão do WhatsApp.</p></div></div>
+                <ol class="steps" aria-label="Progresso da próxima entrega"><li class="done">Infraestrutura</li><li class="current">Domínio e acesso</li><li>Onboarding</li><li>Validação</li></ol>
+              </section>
+
+              <section class="panel journey-panel">
+                <div class="panel-heading"><div><p class="eyebrow">JORNADA INTEGRADA</p><h2>Do lead à operação</h2></div><span>Focussdev Integration Service</span></div>
+                <div class="journey" aria-label="Fluxo operacional">
+                  <div><span>01</span><b>Lead</b><small>DeskcommCRM</small></div><i>→</i>
+                  <div><span>02</span><b>Contrato</b><small>Documenso</small></div><i>→</i>
+                  <div><span>03</span><b>Cobrança</b><small>AureusERP</small></div><i>→</i>
+                  <div><span>04</span><b>Projeto</b><small>Plane</small></div><i>→</i>
+                  <div><span>05</span><b>Entrega</b><small>Forgejo</small></div><i>→</i>
+                  <div><span>06</span><b>Suporte</b><small>FreeScout</small></div>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section class="app-view" id="app-view" hidden aria-live="polite">
+            <div class="app-view-bar">
+              <div><span class="app-symbol green" id="app-symbol">UP</span><span><strong id="app-title">Monitoramento</strong><small id="app-description">Aplicação original · Uptime Kuma</small></span></div>
+              <div><span class="health-pill"><i></i>Conectado</span><a id="open-original" href="https://status.focussdev.space" aria-label="Abrir aplicação original">Abrir original ↗</a></div>
+            </div>
+            <div class="frame-shell" id="frame-shell">
+              <div class="frame-loading" id="frame-loading"><span class="spinner"></span><strong>Carregando aplicação original</strong><small>Conectando com segurança ao Uptime Kuma…</small></div>
+              <iframe id="app-frame" title="Uptime Kuma" src="about:blank" allow="clipboard-read; clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+          </section>
+
+          <section class="planned-view" id="planned-view" hidden aria-live="polite">
+            <div class="planned-card"><span class="planned-icon">↻</span><p class="eyebrow">EM IMPLANTAÇÃO</p><h2 id="planned-title">Aplicação</h2><p>Esta área já está no menu único, mas só será ativada depois que domínio, autenticação, persistência e atualização forem validados.</p><button type="button" data-route="home">Voltar para Meu dia</button></div>
+          </section>
+        </main>
       </section>
+    </div>
 
-      <section id="aplicacoes" class="modules" aria-labelledby="aplicacoes-titulo">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">APLICAÇÕES</p>
-            <h2 id="aplicacoes-titulo">Escolha uma área</h2>
-          </div>
-          <p>3 módulos disponíveis</p>
-        </div>
-
-        <div class="module-grid">
-          <a class="module-card is-available" href="https://auth.focussdev.space">
-            <span class="module-icon" aria-hidden="true">ID</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>IDENTIDADE</span>
-                <span class="badge available">Disponível</span>
-              </span>
-              <strong>Authentik</strong>
-              <span>Login, usuários, grupos, aplicações e políticas de acesso.</span>
-            </span>
-            <span class="module-action" aria-hidden="true">↗</span>
-          </a>
-
-          <a class="module-card is-available" href="https://status.focussdev.space">
-            <span class="module-icon" aria-hidden="true">UP</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>MONITORAMENTO</span>
-                <span class="badge available">Disponível</span>
-              </span>
-              <strong>Uptime Kuma</strong>
-              <span>Monitores, disponibilidade, incidentes e notificações.</span>
-            </span>
-            <span class="module-action" aria-hidden="true">↗</span>
-          </a>
-
-          <a class="module-card is-available" href="https://cofre.focussdev.space">
-            <span class="module-icon" aria-hidden="true">VW</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>COFRE</span>
-                <span class="badge available">Disponível</span>
-              </span>
-              <strong>Vaultwarden</strong>
-              <span>Senhas, credenciais e acessos protegidos da operação.</span>
-            </span>
-            <span class="module-action" aria-hidden="true">↗</span>
-          </a>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">CRM</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>COMERCIAL</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>DeskcommCRM</strong>
-              <span>Leads, vendas, funil, atendimento e WhatsApp.</span>
-            </span>
-          </article>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">ERP</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>FINANCEIRO</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>AureusERP</strong>
-              <span>Receitas, despesas, cobranças, caixa e relatórios.</span>
-            </span>
-          </article>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">PL</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>PROJETOS</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>Plane</strong>
-              <span>Projetos, issues, ciclos, módulos, prazos e entregas.</span>
-            </span>
-          </article>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">DC</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>CONTRATOS</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>Documenso</strong>
-              <span>Propostas, contratos, templates e assinatura eletrônica.</span>
-            </span>
-          </article>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">GIT</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>CÓDIGO</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>Forgejo</strong>
-              <span>Repositórios, branches, commits, releases e colaboração.</span>
-            </span>
-          </article>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">FS</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>SUPORTE</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>FreeScout</strong>
-              <span>Tickets, caixas de entrada, clientes e histórico de suporte.</span>
-            </span>
-          </article>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">BS</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>DOCUMENTAÇÃO</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>BookStack</strong>
-              <span>Procedimentos, APIs, servidores, projetos e tutoriais.</span>
-            </span>
-          </article>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">N8</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>AUTOMAÇÕES</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>n8n</strong>
-              <span>Workflows, webhooks, execuções e credenciais de integração.</span>
-            </span>
-          </article>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">WA</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>WHATSAPP API</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>WAHA</strong>
-              <span>WhatsApp do DeskcommCRM, sessões, mensagens e mídias.</span>
-            </span>
-          </article>
-
-          <article class="module-card is-planned" aria-disabled="true">
-            <span class="module-icon" aria-hidden="true">DB</span>
-            <span class="module-content">
-              <span class="module-meta">
-                <span>BANCO / STORAGE</span>
-                <span class="badge building">Em implantação</span>
-              </span>
-              <strong>Supabase Studio</strong>
-              <span>Banco PostgreSQL, Storage, APIs e infraestrutura própria.</span>
-            </span>
-          </article>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <span>FOCUSSDEV HUB</span>
-      <span>Aplicações independentes. Experiência integrada.</span>
-    </footer>
+    <dialog class="command-dialog" id="command-dialog">
+      <form method="dialog"><div class="command-search"><span>⌕</span><input id="command-input" type="search" placeholder="Buscar CRM, projetos, monitoramento…" autocomplete="off" /><kbd>ESC</kbd></div><div class="command-results" id="command-results"></div></form>
+    </dialog>
   </body>
 </html>

@@ -52,7 +52,8 @@ Status: concluído, funcional e testado com login nativo e SSO OIDC pelo Authent
 - API compatível com clientes Bitwarden suportados.
 - Endpoint de saúde `/alive`.
 - Discovery OIDC do Authentik validado em `/application/o/vaultwarden/.well-known/openid-configuration`.
-- O n8n não receberá permissão para ler segredos do cofre.
+- O Focussdev Integration Service não receberá permissão para ler segredos do cofre; receberá
+  somente as credenciais estritamente necessárias a cada conector por injeção segura.
 
 ## 7. Testes realizados
 
