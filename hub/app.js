@@ -13,6 +13,122 @@ const sidebarScrim = document.querySelector("#sidebar-scrim");
 
 const views = [homeView, appView, plannedView, integrationsView, nativeView];
 
+// ============================================================================
+// SISTEMA GLOBAL DE FEEDBACK & MODAIS PREMIUM (ZERO ALERT/PROMPT)
+// ============================================================================
+window.showToast = function(message, type = "success", duration = 3800) {
+  const container = document.querySelector("#toast-container");
+  if (!container) return;
+
+  const icons = {
+    success: "✓",
+    error: "✕",
+    warning: "⚠",
+    info: "ℹ"
+  };
+
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.setAttribute("role", "alert");
+  toast.innerHTML = `
+    <span class="toast-icon">${icons[type] || "✓"}</span>
+    <div class="toast-content">${message}</div>
+    <button type="button" class="toast-close" aria-label="Fechar notificação">✕</button>
+  `;
+
+  const closeBtn = toast.querySelector(".toast-close");
+  const dismiss = () => {
+    toast.classList.add("toast-hide");
+    setTimeout(() => {
+      if (toast.parentElement) toast.remove();
+    }, 220);
+  };
+
+  if (closeBtn) closeBtn.onclick = dismiss;
+
+  container.appendChild(toast);
+
+  if (duration > 0) {
+    setTimeout(dismiss, duration);
+  }
+};
+
+window.openModal = function({ title, subtitle, contentHtml, confirmText = "Confirmar", cancelText = "Cancelar", onConfirm, onCancel }) {
+  const dialog = document.querySelector("#action-dialog");
+  const shell = document.querySelector("#action-dialog-shell");
+  if (!dialog || !shell) return;
+
+  shell.innerHTML = `
+    <div class="modal-header">
+      <div>
+        <h3>${title || "Ação"}</h3>
+        ${subtitle ? `<p>${subtitle}</p>` : ""}
+      </div>
+      <button type="button" class="modal-close-btn" id="modal-close-x" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body">
+      ${contentHtml || ""}
+    </div>
+    <div class="modal-footer">
+      ${cancelText ? `<button type="button" class="modal-btn-cancel" id="modal-cancel-btn">${cancelText}</button>` : ""}
+      ${confirmText ? `<button type="button" class="modal-btn-confirm" id="modal-confirm-btn">${confirmText}</button>` : ""}
+    </div>
+  `;
+
+  const closeDialog = () => {
+    dialog.close();
+    if (typeof onCancel === "function") onCancel();
+  };
+
+  const cancelBtn = shell.querySelector("#modal-cancel-btn");
+  if (cancelBtn) cancelBtn.onclick = closeDialog;
+
+  const closeX = shell.querySelector("#modal-close-x");
+  if (closeX) closeX.onclick = closeDialog;
+
+  const confirmBtn = shell.querySelector("#modal-confirm-btn");
+  if (confirmBtn) {
+    confirmBtn.onclick = async () => {
+      if (typeof onConfirm === "function") {
+        confirmBtn.disabled = true;
+        const originalText = confirmBtn.textContent;
+        confirmBtn.textContent = "Processando...";
+        try {
+          const res = await onConfirm(shell);
+          if (res !== false) {
+            dialog.close();
+          }
+        } finally {
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = originalText;
+        }
+      } else {
+        dialog.close();
+      }
+    };
+  }
+
+  dialog.oncancel = (e) => {
+    e.preventDefault();
+    closeDialog();
+  };
+
+  dialog.showModal();
+
+  // Foco no primeiro input disponível
+  const firstInput = shell.querySelector("input, select, textarea");
+  if (firstInput) {
+    requestAnimationFrame(() => firstInput.focus());
+  }
+};
+
+window.closeModal = function() {
+  const dialog = document.querySelector("#action-dialog");
+  if (dialog && dialog.open) {
+    dialog.close();
+  }
+};
+
 function showView(view) {
   views.forEach((item) => {
     if (item) item.hidden = item !== view;
@@ -1005,13 +1121,14 @@ async function renderIntegrationCatalog() {
                   item.last_sync_at = connData.data.last_sync_at;
                   item.latency_ms = connData.data.latency_ms;
                   renderIntegrationCatalog();
+                  window.showToast(`Integração com ${item.name} conectada com sucesso! ⚡`, "success");
                 } else {
-                  alert("Erro ao conectar: " + (connData.message || "Tente novamente."));
+                  window.showToast("Erro ao conectar: " + (connData.message || "Tente novamente."), "error");
                   btnConnect.disabled = false;
                   btnConnect.textContent = "Conectar com 1 Clique ⚡";
                 }
               } catch {
-                alert("Erro de conexão com o servidor.");
+                window.showToast("Erro de conexão com o servidor de integrações.", "error");
                 btnConnect.disabled = false;
                 btnConnect.textContent = "Conectar com 1 Clique ⚡";
               }
@@ -1031,9 +1148,10 @@ async function renderIntegrationCatalog() {
                     const now = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                     syncTimeEl.textContent = `${now} (${syncData.data.latency_ms}ms)`;
                   }
+                  window.showToast(`${item.name} sincronizado com sucesso (${syncData.data.latency_ms}ms) 🔄`, "info");
                 }
               } catch {
-                // silencioso
+                window.showToast(`Falha ao sincronizar ${item.name}.`, "error");
               } finally {
                 btnSync.disabled = false;
                 btnSync.textContent = "Sincronizar 🔄";
@@ -1042,22 +1160,41 @@ async function renderIntegrationCatalog() {
           }
 
           if (btnDisconnect) {
-            btnDisconnect.onclick = async () => {
-              if (!confirm(`Deseja realmente desconectar a integração com ${item.name}?`)) return;
-              btnDisconnect.disabled = true;
-              btnDisconnect.textContent = "Desconectando...";
-              try {
-                const discRes = await fetch(`${API_INTEGRATIONS_BASE}/integrations/${item.key}/disconnect`, { method: "POST" });
-                const discData = await discRes.json();
-                if (discData.success) {
-                  item.status = "disconnected";
-                  renderIntegrationCatalog();
+            btnDisconnect.onclick = () => {
+              window.openModal({
+                title: "Desconectar Integração",
+                subtitle: `Confirmação de desconexão segura com ${item.name}`,
+                confirmText: "Sim, Desconectar",
+                cancelText: "Cancelar",
+                contentHtml: `
+                  <p style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">
+                    Ao desconectar o <strong>${item.name}</strong>, a sincronização automática de dados, webhooks e credenciais será pausada. Você poderá reconectar com 1 clique a qualquer momento.
+                  </p>
+                `,
+                onConfirm: async () => {
+                  btnDisconnect.disabled = true;
+                  btnDisconnect.textContent = "Desconectando...";
+                  try {
+                    const discRes = await fetch(`${API_INTEGRATIONS_BASE}/integrations/${item.key}/disconnect`, { method: "POST" });
+                    const discData = await discRes.json();
+                    if (discData.success) {
+                      item.status = "disconnected";
+                      renderIntegrationCatalog();
+                      window.showToast(`Integração com ${item.name} desconectada.`, "info");
+                      return true;
+                    } else {
+                      window.showToast("Erro ao desconectar: " + (discData.message || "Tente novamente."), "error");
+                      return false;
+                    }
+                  } catch {
+                    window.showToast("Erro de conexão ao desconectar.", "error");
+                    return false;
+                  } finally {
+                    btnDisconnect.disabled = false;
+                    btnDisconnect.textContent = "Desconectar";
+                  }
                 }
-              } catch {
-                alert("Erro de conexão ao desconectar.");
-                btnDisconnect.disabled = false;
-                btnDisconnect.textContent = "Desconectar";
-              }
+              });
             };
           }
         };

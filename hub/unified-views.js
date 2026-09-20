@@ -4,6 +4,38 @@
 (function() {
   if (typeof nativeConfig === "undefined") return;
 
+  // Helper de navegação da Jornada Operacional do Lead ao Suporte
+  const renderJourneyNav = (stepNumber) => {
+    const steps = [
+      { num: "01", name: "Lead", sub: "DeskcommCRM", route: "funil-vendas" },
+      { num: "02", name: "Contrato", sub: "Documenso", route: "contratos" },
+      { num: "03", name: "Cobrança", sub: "AureusERP", route: "contas-receber" },
+      { num: "04", name: "Projeto", sub: "Plane", route: "projetos" },
+      { num: "05", name: "Entrega", sub: "Forgejo", route: "entregas-publicacoes" },
+      { num: "06", name: "Suporte", sub: "FreeScout", route: "tickets" }
+    ];
+    const currIdx = stepNumber - 1;
+    const curr = steps[currIdx];
+    const prev = currIdx > 0 ? steps[currIdx - 1] : null;
+    const next = currIdx < steps.length - 1 ? steps[currIdx + 1] : steps[0];
+    const isLast = currIdx === steps.length - 1;
+
+    return `
+      <div class="journey-flow-bar" style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 16px;margin-bottom:18px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:0.7rem;font-weight:800;color:#6d9eff;letter-spacing:0.06em;background:rgba(109,158,255,0.12);border:1px solid rgba(109,158,255,0.25);padding:3px 8px;border-radius:4px;">JORNADA DO CLIENTE</span>
+          <span style="font-size:0.82rem;color:var(--text);font-weight:600;">Passo ${curr.num}/06: <strong>${curr.name}</strong> <small style="color:var(--muted);font-weight:400;">(${curr.sub})</small></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${prev ? `<button type="button" class="btn-journey-nav" data-route="${prev.route}" style="background:transparent;border:1px solid rgba(255,255,255,0.12);color:var(--muted);border-radius:6px;padding:5px 10px;font-size:0.75rem;cursor:pointer;">← ${prev.name}</button>` : ''}
+          <button type="button" class="btn-journey-nav" data-route="${next.route}" style="background:rgba(109,158,255,0.15);border:1px solid rgba(109,158,255,0.3);color:#6d9eff;border-radius:6px;padding:5px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;">
+            ${isLast ? '✓ Ciclo Completo (Novo Lead) 🚀' : `Próximo: ${next.name} →`}
+          </button>
+        </div>
+      </div>
+    `;
+  };
+
   // Extensão do nativeConfig com todas as telas solicitadas
   Object.assign(nativeConfig, {
     // -------------------------------------------------------------
@@ -119,12 +151,12 @@
             <div class="native-card">
               <div class="native-card-head"><h3 class="native-card-title">Proposta Comercial #2026-08</h3><span class="native-card-badge warning">Aguardando Diretor</span></div>
               <p class="native-card-body">Cliente: Gama Distribuidora. Projeto de integração ERP com e-commerce. Valor: R$ 28.000.</p>
-              <div class="native-card-footer"><span>Margem: 42%</span><button type="button" class="native-card-action" onclick="alert('Proposta aprovada com sucesso!')">Aprovar Proposta ✓</button></div>
+              <div class="native-card-footer"><span>Margem: 42%</span><button type="button" class="native-card-action" onclick="window.showToast('Proposta aprovada com sucesso! Contrato pronto para envio no Documenso. ✓', 'success')">Aprovar Proposta ✓</button></div>
             </div>
             <div class="native-card">
               <div class="native-card-head"><h3 class="native-card-title">Aditivo de Escopo #03</h3><span class="native-card-badge warning">Aguardando Aceite</span></div>
               <p class="native-card-body">Cliente: Acme Corporation. Inclusão de módulo de conciliação bancária automática.</p>
-              <div class="native-card-footer"><span>Valor: + R$ 6.500</span><button type="button" class="native-card-action" onclick="alert('Escopo aprovado!')">Aprovar Aditivo ✓</button></div>
+              <div class="native-card-footer"><span>Valor: + R$ 6.500</span><button type="button" class="native-card-action" onclick="window.showToast('Aditivo de escopo aprovado com sucesso! ✓', 'success')">Aprovar Aditivo ✓</button></div>
             </div>
           </div>
         </div>
@@ -191,6 +223,7 @@
       description: "Pipeline visual de negociações em formato Kanban integrado com valores em R$ e WhatsApp.",
       badge: "Twenty CRM Engine",
       render: () => `
+        ${renderJourneyNav(1)}
         <div class="status-grid">
           <article class="status-card"><span class="metric-icon online">💎</span><div id="metric-deals-total"><strong>R$ 0</strong><span>Total no Pipeline</span></div></article>
           <article class="status-card"><span class="metric-icon building">💼</span><div id="metric-deals-count"><strong>0</strong><span>Oportunidades Ativas</span></div></article>
@@ -390,6 +423,7 @@
       description: "Visão macro de todos os projetos ativos, sprints e repositórios vinculados.",
       badge: "Plane + Git",
       render: () => `
+        ${renderJourneyNav(4)}
         <div class="panel">
           <div class="panel-heading"><h2>Projetos Ativos</h2><span>Engenharia & Desenvolvimento</span></div>
           <div class="native-grid">
@@ -413,6 +447,7 @@
       description: "Contratos de prestação de serviço, NDAs e termos assinados eletronicamente.",
       badge: "Documenso Engine",
       render: () => `
+        ${renderJourneyNav(2)}
         <div class="panel">
           <div class="panel-heading">
             <div><h2>Contratos & Documentos Oficiais</h2><p class="eyebrow" style="margin-top:4px">Assinatura digital válida com carimbo criptográfico</p></div>
@@ -485,6 +520,7 @@
       description: "Histórico consolidado de releases em produção, branches e commits do Forgejo Git.",
       badge: "Forgejo / CI",
       render: () => `
+        ${renderJourneyNav(5)}
         <div class="panel">
           <div class="panel-heading"><h2>Deploys Recentes em Produção</h2><span>Pipelines Automatizados</span></div>
           <div class="native-timeline-list" id="deploys-list">
@@ -522,6 +558,7 @@
       description: "Central de atendimento técnico com controle de SLA, protocolos e histórico.",
       badge: "FreeScout Engine",
       render: () => `
+        ${renderJourneyNav(6)}
         <div class="panel">
           <div class="panel-heading">
             <div><h2>Fila de Chamados</h2><p class="eyebrow" style="margin-top:4px">Atendimento aos clientes e chamados técnicos</p></div>
@@ -589,6 +626,7 @@
       description: "Faturas emitidas com chave/código PIX copia e cola integrado e status de liquidação.",
       badge: "PIX Integrado",
       render: () => `
+        ${renderJourneyNav(3)}
         <div class="panel">
           <div class="panel-heading">
             <div><h2>Faturas de Clientes</h2><p class="eyebrow" style="margin-top:4px">Clique em "Copiar PIX" para enviar ao cliente no WhatsApp</p></div>
@@ -1033,7 +1071,7 @@
             <div class="native-card" style="margin-top:16px;">
               <div class="native-card-head"><h3 class="native-card-title">Instância Principal</h3><span class="native-card-badge active">Online (98% Bateria)</span></div>
               <p class="native-card-body">Número Pareado: <strong>+55 (11) 98765-4321</strong>. Webhooks sincronizados com a Caixa de Entrada.</p>
-              <div class="native-card-footer"><span>Engine: WAHA</span><button type="button" class="native-card-action" onclick="alert('Instância saudável e respondendo a pings!')">Testar Ping ⚡</button></div>
+              <div class="native-card-footer"><span>Engine: WAHA</span><button type="button" class="native-card-action" onclick="window.showToast('Instância WAHA saudável e respondendo aos pings em 18ms! ⚡', 'success')">Testar Ping ⚡</button></div>
             </div>
           </div>
         </div>
@@ -1392,28 +1430,74 @@
         document.querySelector("#metric-tasks-progress strong").textContent = cProg;
         document.querySelector("#metric-tasks-done strong").textContent = cDone;
 
-        // Botão Nova Tarefa (Integrado via API / PostgreSQL)
+        // Botão Nova Tarefa (Integrado via Modal Fluido & PostgreSQL)
         const btnNovaTarefa = document.querySelector("#btn-nova-tarefa");
         if (btnNovaTarefa) {
-          btnNovaTarefa.onclick = async () => {
-            const title = prompt("Digite o título da nova tarefa:");
-            if (!title || !title.trim()) return;
-            const prio = prompt("Prioridade (low, medium, high, urgent):", "medium") || "medium";
-            try {
-              const createRes = await fetch(`${API}/tasks`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title: title.trim(), priority: prio, status: "todo" })
-              });
-              if (createRes.ok) {
-                alert("Tarefa cadastrada com sucesso no PostgreSQL central!");
-                hydrateNativeRoute("tarefas");
-              } else {
-                alert("Erro ao cadastrar tarefa.");
+          btnNovaTarefa.onclick = () => {
+            if (typeof window.openModal !== "function") return;
+            window.openModal({
+              title: "Nova Tarefa Operacional",
+              subtitle: "Criação no Plane & persistência relacional no PostgreSQL",
+              confirmText: "Criar Tarefa 🚀",
+              contentHtml: `
+                <div class="modal-form">
+                  <div class="form-group">
+                    <label class="form-label" for="task-title">Título da Tarefa *</label>
+                    <input id="task-title" class="form-input" placeholder="Ex: Integrar webhook de faturamento..." autofocus />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="task-priority">Prioridade</label>
+                    <select id="task-priority" class="form-select">
+                      <option value="low">Baixa</option>
+                      <option value="medium" selected>Média</option>
+                      <option value="high">Alta</option>
+                      <option value="urgent">Urgente 🔥</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="task-status">Status Inicial</label>
+                    <select id="task-status" class="form-select">
+                      <option value="todo" selected>A Fazer (Backlog)</option>
+                      <option value="in_progress">Em Progresso</option>
+                      <option value="review">Em Revisão</option>
+                    </select>
+                  </div>
+                </div>
+              `,
+              onConfirm: async (modalEl) => {
+                const titleInput = modalEl.querySelector("#task-title");
+                const prioInput = modalEl.querySelector("#task-priority");
+                const statusInput = modalEl.querySelector("#task-status");
+                const title = titleInput?.value.trim();
+                if (!title) {
+                  window.showToast("Por favor, digite o título da tarefa.", "warning");
+                  titleInput?.focus();
+                  return false;
+                }
+                try {
+                  const createRes = await fetch(`${API}/tasks`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      title,
+                      priority: prioInput?.value || "medium",
+                      status: statusInput?.value || "todo"
+                    })
+                  });
+                  if (createRes.ok) {
+                    window.showToast("Tarefa cadastrada com sucesso no PostgreSQL central! 🚀", "success");
+                    hydrateNativeRoute("tarefas");
+                    return true;
+                  } else {
+                    window.showToast("Erro ao cadastrar tarefa no servidor.", "error");
+                    return false;
+                  }
+                } catch {
+                  window.showToast("Erro de conexão ao criar tarefa.", "error");
+                  return false;
+                }
               }
-            } catch (err) {
-              alert("Erro de conexão ao criar tarefa.");
-            }
+            });
           };
         }
       }
@@ -1441,6 +1525,20 @@
           let totalVal = 0, wonVal = 0;
           let counts = { lead: 0, qualified: 0, proposal: 0, negotiation: 0, won: 0 };
 
+          const nextStageMap = {
+            lead: "qualified",
+            qualified: "proposal",
+            proposal: "negotiation",
+            negotiation: "won"
+          };
+
+          const nextStageLabel = {
+            lead: "Qualificar →",
+            qualified: "Proposta →",
+            proposal: "Negociar →",
+            negotiation: "Ganhar! 🏆"
+          };
+
           data.forEach(deal => {
             const valCents = parseInt(deal.value_cents || "0", 10);
             totalVal += valCents;
@@ -1451,6 +1549,9 @@
             const card = document.createElement("div");
             card.className = "kanban-card";
             const valFormatted = `R$ ${(valCents / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            const next = nextStageMap[deal.stage];
+            const nextLabel = nextStageLabel[deal.stage];
+
             card.innerHTML = `
               <div class="k-card-title">${deal.title}</div>
               <div style="font-weight:700;color:var(--green);margin:4px 0;">${valFormatted}</div>
@@ -1458,7 +1559,38 @@
                 <small>${deal.contact_name || 'Contato'}</small>
                 ${deal.contact_phone ? `<a href="https://wa.me/${deal.contact_phone.replace(/\D/g,'')}" target="_blank" style="color:var(--blue);text-decoration:none;font-size:0.75rem;">WhatsApp ↗</a>` : ''}
               </div>
+              ${next ? `
+                <div style="margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:flex-end;">
+                  <button type="button" class="btn-advance-deal" data-id="${deal.id}" data-next="${next}" style="background:rgba(109,158,255,0.12);border:1px solid rgba(109,158,255,0.3);color:#6d9eff;border-radius:4px;padding:3px 8px;font-size:0.7rem;font-weight:600;cursor:pointer;">${nextLabel}</button>
+                </div>
+              ` : ''}
             `;
+
+            const btnAdvance = card.querySelector(".btn-advance-deal");
+            if (btnAdvance) {
+              btnAdvance.onclick = async (e) => {
+                e.stopPropagation();
+                btnAdvance.disabled = true;
+                btnAdvance.textContent = "Atualizando...";
+                try {
+                  const patchRes = await fetch(`${API}/deals/${deal.id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ stage: next })
+                  });
+                  if (patchRes.ok) {
+                    window.showToast(`Negócio "${deal.title}" avançou para ${next.toUpperCase()}! 🎯`, "success");
+                    hydrateNativeRoute("funil-vendas");
+                  } else {
+                    window.showToast("Erro ao avançar estágio do negócio.", "error");
+                    btnAdvance.disabled = false;
+                  }
+                } catch {
+                  window.showToast("Erro de conexão ao atualizar negócio.", "error");
+                  btnAdvance.disabled = false;
+                }
+              };
+            }
 
             if (deal.stage === "qualified" && qualEl) qualEl.appendChild(card);
             else if (deal.stage === "proposal" && propEl) propEl.appendChild(card);
@@ -1478,6 +1610,91 @@
           if (countEl) countEl.textContent = data.length;
           const wonElMetric = document.querySelector("#metric-deals-won strong");
           if (wonElMetric) wonElMetric.textContent = `R$ ${(wonVal / 100).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`;
+
+          // Botão Nova Oportunidade / Lead (Modal Fluido)
+          const btnNovoDeal = document.querySelector("#btn-novo-deal");
+          if (btnNovoDeal) {
+            btnNovoDeal.onclick = () => {
+              if (typeof window.openModal !== "function") return;
+              window.openModal({
+                title: "Nova Oportunidade de Vendas",
+                subtitle: "Cadastro no DeskcommCRM / Twenty & persistência no PostgreSQL",
+                confirmText: "Cadastrar Oportunidade 💼",
+                contentHtml: `
+                  <div class="modal-form">
+                    <div class="form-group">
+                      <label class="form-label" for="deal-title">Título do Negócio *</label>
+                      <input id="deal-title" class="form-input" placeholder="Ex: Plataforma E-commerce Acme" autofocus />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="deal-val">Valor Estimado (R$)</label>
+                      <input id="deal-val" type="number" step="100" class="form-input" placeholder="15000" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="deal-stage">Estágio Inicial</label>
+                      <select id="deal-stage" class="form-select">
+                        <option value="lead" selected>Lead (Novo Contato)</option>
+                        <option value="qualified">Qualificado</option>
+                        <option value="proposal">Proposta Apresentada</option>
+                        <option value="negotiation">Em Negociação</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="deal-contact">Nome do Contato / Decisor</label>
+                      <input id="deal-contact" class="form-input" placeholder="Ex: Carlos Mendes" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="deal-phone">WhatsApp / Telefone</label>
+                      <input id="deal-phone" class="form-input" placeholder="+55 11 99999-8888" />
+                    </div>
+                  </div>
+                `,
+                onConfirm: async (modalEl) => {
+                  const titleInput = modalEl.querySelector("#deal-title");
+                  const valInput = modalEl.querySelector("#deal-val");
+                  const stageInput = modalEl.querySelector("#deal-stage");
+                  const contactInput = modalEl.querySelector("#deal-contact");
+                  const phoneInput = modalEl.querySelector("#deal-phone");
+
+                  const title = titleInput?.value.trim();
+                  if (!title) {
+                    window.showToast("Por favor, digite o título da oportunidade.", "warning");
+                    titleInput?.focus();
+                    return false;
+                  }
+
+                  const numVal = parseFloat(valInput?.value || "0") || 0;
+                  const value_cents = Math.round(numVal * 100);
+
+                  try {
+                    const createRes = await fetch(`${API}/deals`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        title,
+                        value_cents,
+                        stage: stageInput?.value || "lead",
+                        contact_name: contactInput?.value.trim() || undefined,
+                        contact_phone: phoneInput?.value.trim() || undefined,
+                        channel: "whatsapp"
+                      })
+                    });
+                    if (createRes.ok) {
+                      window.showToast("Oportunidade cadastrada no funil com sucesso! 💼", "success");
+                      hydrateNativeRoute("funil-vendas");
+                      return true;
+                    } else {
+                      window.showToast("Erro ao cadastrar oportunidade.", "error");
+                      return false;
+                    }
+                  } catch {
+                    window.showToast("Erro de conexão ao criar oportunidade.", "error");
+                    return false;
+                  }
+                }
+              });
+            };
+          }
         } else if (routeKey === "oportunidades") {
           const tbl = document.querySelector("#deals-list-table");
           if (tbl) {
@@ -1515,11 +1732,87 @@
               <p class="native-card-body">Fatura: ${inv.invoice_number} · Vencimento: ${due}.</p>
               <div class="native-card-footer">
                 <strong style="color:var(--green);">${val}</strong>
-                ${inv.pix_code ? `<button type="button" class="native-card-action" onclick="navigator.clipboard.writeText('${inv.pix_code}');alert('Código PIX Copiado!');">Copiar PIX 📋</button>` : ''}
+                ${inv.pix_code ? `<button type="button" class="native-card-action btn-copy-pix" data-pix="${inv.pix_code}">Copiar PIX 📋</button>` : ''}
               </div>
             </div>
           `;
         }).join('');
+
+        grid.querySelectorAll(".btn-copy-pix").forEach(btn => {
+          btn.onclick = () => {
+            const code = btn.dataset.pix;
+            if (code) {
+              navigator.clipboard.writeText(code);
+              window.showToast("Código PIX copiado para a área de transferência! 📋", "success");
+            }
+          };
+        });
+
+        // Botão Nova Fatura (Modal Fluido)
+        const btnNovaFatura = document.querySelector("#btn-nova-fatura");
+        if (btnNovaFatura) {
+          btnNovaFatura.onclick = () => {
+            if (typeof window.openModal !== "function") return;
+            window.openModal({
+              title: "Nova Fatura / Cobrança PIX",
+              subtitle: "Emissão no AureusERP com código PIX copia e cola automático",
+              confirmText: "Emitir Fatura 💵",
+              contentHtml: `
+                <div class="modal-form">
+                  <div class="form-group">
+                    <label class="form-label" for="inv-title">Descrição da Fatura *</label>
+                    <input id="inv-title" class="form-input" placeholder="Ex: Mensalidade Plataforma SaaS - Setembro" autofocus />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="inv-amount">Valor (R$) *</label>
+                    <input id="inv-amount" type="number" step="50" class="form-input" placeholder="3500.00" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="inv-due">Data de Vencimento *</label>
+                    <input id="inv-due" type="date" class="form-input" value="${new Date(Date.now() + 7*86400000).toISOString().split('T')[0]}" />
+                  </div>
+                </div>
+              `,
+              onConfirm: async (modalEl) => {
+                const titleInput = modalEl.querySelector("#inv-title");
+                const amountInput = modalEl.querySelector("#inv-amount");
+                const dueInput = modalEl.querySelector("#inv-due");
+
+                const title = titleInput?.value.trim();
+                const amount = parseFloat(amountInput?.value || "0");
+                const due_date = dueInput?.value;
+
+                if (!title || !amount || amount <= 0 || !due_date) {
+                  window.showToast("Preencha todos os campos da fatura corretamente.", "warning");
+                  return false;
+                }
+
+                try {
+                  const createRes = await fetch(`${API}/invoices`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      title,
+                      amount_cents: Math.round(amount * 100),
+                      due_date
+                    })
+                  });
+                  if (createRes.ok) {
+                    window.showToast("Fatura emitida com chave PIX gerada com sucesso! 💵", "success");
+                    hydrateNativeRoute("contas-receber");
+                    return true;
+                  } else {
+                    window.showToast("Erro ao emitir fatura no servidor.", "error");
+                    return false;
+                  }
+                } catch {
+                  window.showToast("Erro de conexão ao emitir fatura.", "error");
+                  return false;
+                }
+              }
+            });
+          };
+        }
       }
 
       // 4. CONTRATOS (Documenso)
@@ -1631,7 +1924,7 @@
           <div class="native-card">
             <div class="native-card-head"><h3 class="native-card-title">${v.title}</h3><span class="native-card-badge active">${v.category}</span></div>
             <p class="native-card-body">Usuário: <code>${v.username || 'N/A'}</code> · URL: ${v.url || '-'}.</p>
-            <div class="native-card-footer"><span>${v.notes || 'Criptografia ativa'}</span><button type="button" class="native-card-action" onclick="alert('Credencial protegida copiada com segurança!')">Copiar Senha 🔑</button></div>
+            <div class="native-card-footer"><span>${v.notes || 'Criptografia ativa'}</span><button type="button" class="native-card-action" onclick="window.showToast('Credencial protegida copiada com segurança! 🔑', 'info')">Copiar Senha 🔑</button></div>
           </div>
         `).join('');
       }
@@ -1704,7 +1997,7 @@
             if (!input || !card) return;
             const cnpjVal = input.value.trim().replace(/\D/g, "");
             if (cnpjVal.length !== 14) {
-              alert("Por favor, digite um CNPJ válido com 14 dígitos.");
+              window.showToast("Por favor, digite um CNPJ válido com 14 dígitos.", "warning");
               return;
             }
             btn.disabled = true;
@@ -1730,7 +2023,7 @@
                     </p>
                     <div class="native-card-footer">
                       <span>Receita Federal · Situação Cadastral Regular</span>
-                      <button type="button" class="primary-action" onclick="alert('Empresa importada para a carteira de clientes!');">Importar para Clientes ✓</button>
+                      <button type="button" class="primary-action" onclick="window.showToast('Empresa ${data.razao_social} importada para a carteira de clientes! ✓', 'success');">Importar para Clientes ✓</button>
                     </div>
                   </div>
                 `;
@@ -1938,11 +2231,12 @@
                   fb.style.display = "inline";
                   setTimeout(() => { fb.style.display = "none"; }, 3000);
                 }
+                window.showToast(`Configurações de ${category} salvas com sucesso no PostgreSQL! ✓`, "success");
               } else {
-                alert("Erro ao salvar configurações.");
+                window.showToast("Erro ao salvar configurações no servidor.", "error");
               }
             } catch (err) {
-              alert("Erro de conexão ao salvar.");
+              window.showToast("Erro de conexão ao salvar configurações.", "error");
             } finally {
               btn.disabled = false;
               btn.textContent = originalText;

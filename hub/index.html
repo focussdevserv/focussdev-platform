@@ -212,13 +212,13 @@
 
               <section class="panel journey-panel">
                 <div class="panel-heading"><div><p class="eyebrow">JORNADA INTEGRADA</p><h2>Do lead à operação</h2></div><span>Focussdev Integration Service</span></div>
-                <div class="journey" aria-label="Fluxo operacional">
-                  <div><span>01</span><b>Lead</b><small>DeskcommCRM</small></div><i>→</i>
-                  <div><span>02</span><b>Contrato</b><small>Documenso</small></div><i>→</i>
-                  <div><span>03</span><b>Cobrança</b><small>AureusERP</small></div><i>→</i>
-                  <div><span>04</span><b>Projeto</b><small>Plane</small></div><i>→</i>
-                  <div><span>05</span><b>Entrega</b><small>Forgejo</small></div><i>→</i>
-                  <div><span>06</span><b>Suporte</b><small>FreeScout</small></div>
+                <div class="journey" aria-label="Fluxo operacional interativo">
+                  <div class="journey-step-btn" data-route="funil-vendas" style="cursor:pointer;" title="Ver Leads e Funil de Vendas"><span>01</span><b>Lead</b><small>DeskcommCRM</small></div><i>→</i>
+                  <div class="journey-step-btn" data-route="contratos" style="cursor:pointer;" title="Ver Contratos e Assinaturas"><span>02</span><b>Contrato</b><small>Documenso</small></div><i>→</i>
+                  <div class="journey-step-btn" data-route="contas-receber" style="cursor:pointer;" title="Ver Cobranças e PIX"><span>03</span><b>Cobrança</b><small>AureusERP</small></div><i>→</i>
+                  <div class="journey-step-btn" data-route="projetos" style="cursor:pointer;" title="Ver Projetos e Tarefas"><span>04</span><b>Projeto</b><small>Plane</small></div><i>→</i>
+                  <div class="journey-step-btn" data-route="entregas-publicacoes" style="cursor:pointer;" title="Ver Deploys e Releases"><span>05</span><b>Entrega</b><small>Forgejo</small></div><i>→</i>
+                  <div class="journey-step-btn" data-route="tickets" style="cursor:pointer;" title="Ver Suporte e Chamados"><span>06</span><b>Suporte</b><small>FreeScout</small></div>
                 </div>
               </section>
             </div>
@@ -277,6 +277,14 @@
 
     <dialog class="command-dialog" id="command-dialog">
       <form method="dialog"><div class="command-search"><span>⌕</span><input id="command-input" type="search" placeholder="Buscar CRM, projetos, monitoramento…" autocomplete="off" /><kbd>ESC</kbd></div><div class="command-results" id="command-results"></div></form>
+    </dialog>
+
+    <!-- Container de Notificações Toast Fluidas -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- Modal Dinâmico de Ações Rápidas -->
+    <dialog id="action-dialog" class="action-dialog">
+      <div class="action-dialog-shell" id="action-dialog-shell"></div>
     </dialog>
   </body>
 </html>

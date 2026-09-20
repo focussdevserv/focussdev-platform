@@ -10,6 +10,16 @@ const config = loadConfig();
 const pool = createPool(config.DATABASE_URL);
 const app = Fastify({ logger: true, bodyLimit: 1_048_576 });
 
+// Parser tolerante que aceita JSON vazio ou em branco sem quebrar requisições
+app.addContentTypeParser("application/json", { parseAs: "string" }, (_req, body, done) => {
+  try {
+    const json = (typeof body === "string" && body.trim().length > 0) ? JSON.parse(body) : {};
+    done(null, json);
+  } catch (err) {
+    done(err as Error, undefined);
+  }
+});
+
 registerPlatformCoreRoutes(app, pool);
 
 app.get("/health", async (_request, reply) => {
