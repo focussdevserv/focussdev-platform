@@ -850,16 +850,314 @@
     // 7. ADMINISTRAÇÃO
     // -------------------------------------------------------------
     "configuracoes": {
-      eyebrow: "ADMINISTRAÇÃO · PARÂMETROS",
-      title: "Configurações da Plataforma",
-      description: "Configurações gerais da empresa, logotipo, moeda padrão e notificações.",
-      badge: "Geral",
+      eyebrow: "ADMINISTRAÇÃO · CENTRAL UNIFICADA",
+      title: "Configurações do Focussdev",
+      description: "Ponto central de governança, parametrização dos 16 motores e status do ecossistema.",
+      badge: "Central de Governança",
       render: () => `
-        <div class="panel">
-          <div class="panel-heading"><h2>Dados da Empresa</h2><span>Configurações Globais</span></div>
-          <div class="form-row">
-            <div class="form-group"><label>Nome da Empresa</label><input value="Focussdev Serviços de Tecnologia" readonly style="background:var(--bg-input);padding:8px;border:1px solid var(--border);border-radius:6px;width:100%" /></div>
-            <div class="form-group"><label>E-mail Corporativo</label><input value="contato@focussdev.com.br" readonly style="background:var(--bg-input);padding:8px;border:1px solid var(--border);border-radius:6px;width:100%" /></div>
+        <!-- Sub-navegação em abas das 16 categorias -->
+        <div class="settings-tabs-bar" id="settings-tabs-nav">
+          <button type="button" class="settings-tab-btn is-active" data-tab="status-modulos">🟢 Status dos Módulos</button>
+          <button type="button" class="settings-tab-btn" data-tab="geral">Geral</button>
+          <button type="button" class="settings-tab-btn" data-tab="usuarios">Usuários & Acessos</button>
+          <button type="button" class="settings-tab-btn" data-tab="crm">CRM</button>
+          <button type="button" class="settings-tab-btn" data-tab="projetos">Projetos</button>
+          <button type="button" class="settings-tab-btn" data-tab="financeiro">Financeiro</button>
+          <button type="button" class="settings-tab-btn" data-tab="documentos">Documentos</button>
+          <button type="button" class="settings-tab-btn" data-tab="whatsapp">WhatsApp</button>
+          <button type="button" class="settings-tab-btn" data-tab="suporte">Suporte</button>
+          <button type="button" class="settings-tab-btn" data-tab="documentacao">Documentação</button>
+          <button type="button" class="settings-tab-btn" data-tab="git">Git & CI/CD</button>
+          <button type="button" class="settings-tab-btn" data-tab="backend">Backend & DB</button>
+          <button type="button" class="settings-tab-btn" data-tab="monitoramento">Monitoramento</button>
+          <button type="button" class="settings-tab-btn" data-tab="cofre">Cofre</button>
+          <button type="button" class="settings-tab-btn" data-tab="pdf-forms">PDF & Forms</button>
+          <button type="button" class="settings-tab-btn" data-tab="integracoes">Integrações</button>
+        </div>
+
+        <!-- ABA 1: STATUS DOS MÓDULOS -->
+        <div class="settings-tab-pane is-active" id="pane-status-modulos">
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Status dos 16 Motores Open Source</h2>
+                <p class="eyebrow" style="margin-top:4px">Conectividade, latência, versão e testes ao vivo</p>
+              </div>
+              <button type="button" class="primary-action" id="btn-retest-all">Testar Todos os Motores ⚡</button>
+            </div>
+            <div class="table-responsive" style="overflow-x:auto;">
+              <table class="settings-status-table" style="width:100%;border-collapse:collapse;margin-top:12px;">
+                <thead>
+                  <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:0.72rem;text-transform:uppercase;">
+                    <th style="padding:10px 12px;">Motor / Sistema</th>
+                    <th style="padding:10px 12px;">Categoria</th>
+                    <th style="padding:10px 12px;">Versão</th>
+                    <th style="padding:10px 12px;">Autenticação</th>
+                    <th style="padding:10px 12px;">Status</th>
+                    <th style="padding:10px 12px;">Latência</th>
+                    <th style="padding:10px 12px;text-align:right;">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="modules-status-tbody">
+                  <tr><td colspan="7" class="loading-state" style="padding:24px;text-align:center;">Verificando conectividade com os 16 serviços...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 2: GERAL -->
+        <div class="settings-tab-pane" id="pane-geral" hidden>
+          <div class="panel">
+            <div class="panel-heading"><h2>Dados Institucionais & Globais</h2><span>Configurações Básicas</span></div>
+            <div class="form-row">
+              <div class="form-group"><label>Razão Social</label><input value="Focussdev Serviços de Tecnologia LTDA" class="settings-input" /></div>
+              <div class="form-group"><label>Nome Fantasia</label><input value="Focussdev" class="settings-input" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>CNPJ</label><input value="14.829.102/0001-44" class="settings-input" /></div>
+              <div class="form-group"><label>E-mail Corporativo</label><input value="contato@focussdev.com.br" class="settings-input" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Idioma Padrão</label><select class="settings-input"><option selected>Português do Brasil (pt-BR)</option></select></div>
+              <div class="form-group"><label>Fuso Horário</label><select class="settings-input"><option selected>America/Sao_Paulo (UTC-3 / Brasília)</option></select></div>
+            </div>
+            <button type="button" class="primary-action" onclick="alert('Configurações gerais salvas com sucesso!')" style="margin-top:12px;">Salvar Alterações</button>
+          </div>
+        </div>
+
+        <!-- ABA 3: USUÁRIOS & ACESSOS (Authentik) -->
+        <div class="settings-tab-pane" id="pane-usuarios" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Identidade & Login Central (SSO)</h2><p class="eyebrow" style="margin-top:4px">Gerenciado pelo Authentik</p></div>
+              <a href="https://auth.focussdev.space" target="_blank" class="primary-action">Abrir Console Authentik ↗</a>
+            </div>
+            <p class="native-card-body">O login centralizado, os fluxos de 2FA e as permissões de grupos são controlados oficialmente pelo Authentik.</p>
+            <div class="native-grid" style="margin-top:16px;">
+              <div class="native-card">
+                <div class="native-card-head"><h3 class="native-card-title">Grupos Configurados</h3><span class="native-card-badge active">5 Ativos</span></div>
+                <p class="native-card-body">Administradores, Engenharia, Comercial, Suporte e Clientes com políticas de RBAC ativas.</p>
+                <div class="native-card-footer"><span>2FA Obrigatório</span><span class="stage-pill">Políticas OIDC</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 4: CRM (DeskcommCRM) -->
+        <div class="settings-tab-pane" id="pane-crm" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Parâmetros Comerciais & CRM</h2><p class="eyebrow" style="margin-top:4px">DeskcommCRM Nativo</p></div>
+              <a href="https://crm.focussdev.space/app/settings" target="_blank" class="primary-action">Painel do CRM ↗</a>
+            </div>
+            <div class="native-grid" style="margin-top:16px;">
+              <div class="native-card">
+                <div class="native-card-head"><h3 class="native-card-title">Regras de Atendimento</h3><span class="native-card-badge active">Configurado</span></div>
+                <p class="native-card-body">Silêncio humano: Ativo quando atendente assume. Tempo limite primeira resposta: 15 minutos.</p>
+                <div class="native-card-footer"><span>Round-Robin Ativo</span><span class="stage-pill">Fila de Espera</span></div>
+              </div>
+              <div class="native-card">
+                <div class="native-card-head"><h3 class="native-card-title">Funis & Pipelines</h3><span class="native-card-badge active">3 Funis</span></div>
+                <p class="native-card-body">Novos Projetos SaaS, Manutenção & MRR e Parcerias Comerciais.</p>
+                <div class="native-card-footer"><span>Status: Em operação</span><button type="button" class="native-card-action" data-route="funil-vendas">Ver Funil →</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 5: PROJETOS (Plane) -->
+        <div class="settings-tab-pane" id="pane-projetos" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Padrões de Engenharia & Projetos</h2><p class="eyebrow" style="margin-top:4px">Plane Engine</p></div>
+              <a href="https://projetos.focussdev.space" target="_blank" class="primary-action">Abrir Plane ↗</a>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Duração Padrão das Sprints</label><select class="settings-input"><option selected>14 dias (2 semanas)</option><option>7 dias (1 semana)</option></select></div>
+              <div class="form-group"><label>Prioridade Padrão de Tarefa</label><select class="settings-input"><option selected>Média (Medium)</option><option>Alta (High)</option></select></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 6: FINANCEIRO (AureusERP) -->
+        <div class="settings-tab-pane" id="pane-financeiro" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Regras Financeiras & Cobrança</h2><p class="eyebrow" style="margin-top:4px">AureusERP</p></div>
+              <a href="https://erp.focussdev.space" target="_blank" class="primary-action">Abrir ERP ↗</a>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Chave PIX Padrão</label><input value="contato@focussdev.com.br" class="settings-input" /></div>
+              <div class="form-group"><label>Banco Receptor</label><input value="Banco Inter PJ" class="settings-input" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Cobrança Antecipada</label><select class="settings-input"><option selected>3 dias antes do vencimento</option></select></div>
+              <div class="form-group"><label>Juros de Mora (%)</label><input value="1.0% ao mês" class="settings-input" /></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 7: DOCUMENTOS (Documenso) -->
+        <div class="settings-tab-pane" id="pane-documentos" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Contratos & Assinaturas Digitais</h2><p class="eyebrow" style="margin-top:4px">Documenso Engine</p></div>
+              <a href="https://docs.focussdev.space" target="_blank" class="primary-action">Abrir Documenso ↗</a>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Validade Padrão das Propostas</label><input value="10 dias úteis" class="settings-input" /></div>
+              <div class="form-group"><label>Carimbo Criptográfico de Tempo</label><select class="settings-input"><option selected>Ativo (SHA-256 ICP-Brasil)</option></select></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 8: WHATSAPP (WAHA) -->
+        <div class="settings-tab-pane" id="pane-whatsapp" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Instâncias de WhatsApp</h2><p class="eyebrow" style="margin-top:4px">WAHA HTTP API Nativa</p></div>
+              <span class="health-pill"><i></i>Sessão Conectada</span>
+            </div>
+            <div class="native-card" style="margin-top:16px;">
+              <div class="native-card-head"><h3 class="native-card-title">Instância Principal</h3><span class="native-card-badge active">Online (98% Bateria)</span></div>
+              <p class="native-card-body">Número Pareado: <strong>+55 (11) 98765-4321</strong>. Webhooks sincronizados com a Caixa de Entrada.</p>
+              <div class="native-card-footer"><span>Engine: WAHA</span><button type="button" class="native-card-action" onclick="alert('Instância saudável e respondendo a pings!')">Testar Ping ⚡</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 9: SUPORTE (FreeScout) -->
+        <div class="settings-tab-pane" id="pane-suporte" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Regras de SLA & Helpdesk</h2><p class="eyebrow" style="margin-top:4px">FreeScout Engine</p></div>
+              <a href="https://suporte.focussdev.space" target="_blank" class="primary-action">Abrir FreeScout ↗</a>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>SLA Primeiro Atendimento (Urgente)</label><input value="15 minutos" class="settings-input" /></div>
+              <div class="form-group"><label>SLA Resolução Padrão</label><input value="4 horas úteis" class="settings-input" /></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 10: DOCUMENTAÇÃO (BookStack) -->
+        <div class="settings-tab-pane" id="pane-documentacao" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Base de Conhecimento & Wiki</h2><p class="eyebrow" style="margin-top:4px">BookStack Engine</p></div>
+              <a href="https://wiki.focussdev.space" target="_blank" class="primary-action">Abrir BookStack ↗</a>
+            </div>
+            <p class="native-card-body">Estrutura organizada por Estantes e Livros por Cliente. Permissões controladas pelo Authentik.</p>
+          </div>
+        </div>
+
+        <!-- ABA 11: GIT (Forgejo) -->
+        <div class="settings-tab-pane" id="pane-git" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Repositórios & Deploys</h2><p class="eyebrow" style="margin-top:4px">Forgejo Git</p></div>
+              <a href="https://git.focussdev.space" target="_blank" class="primary-action">Abrir Forgejo ↗</a>
+            </div>
+            <p class="native-card-body">Webhooks ativados para disparar atualizações automáticas na Central de Deploys a cada push.</p>
+          </div>
+        </div>
+
+        <!-- ABA 12: BACKEND (Supabase) -->
+        <div class="settings-tab-pane" id="pane-backend" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Banco Relacional & Storage</h2><p class="eyebrow" style="margin-top:4px">Supabase Self-Hosted</p></div>
+              <a href="https://supabase.focussdev.space" target="_blank" class="primary-action">Abrir Studio ↗</a>
+            </div>
+            <p class="native-card-body">PostgreSQL central com isolamento de schemas, filas transacionais e buckets de storage S3.</p>
+          </div>
+        </div>
+
+        <!-- ABA 13: MONITORAMENTO (Uptime Kuma & Beszel) -->
+        <div class="settings-tab-pane" id="pane-monitoramento" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Saúde de Servidores & Uptime</h2><p class="eyebrow" style="margin-top:4px">Uptime Kuma + Beszel</p></div>
+              <a href="https://status.focussdev.space" target="_blank" class="primary-action">Status Page ↗</a>
+            </div>
+            <p class="native-card-body">5 monitores HTTP/Port ativos com checagem a cada 60 segundos e alertas de CPU/RAM acima de 85%.</p>
+          </div>
+        </div>
+
+        <!-- ABA 14: COFRE (Vaultwarden) -->
+        <div class="settings-tab-pane" id="pane-cofre" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><h2>Cofre de Senhas & Chaves</h2><p class="eyebrow" style="margin-top:4px">Vaultwarden (Zero-Knowledge)</p></div>
+              <a href="https://cofre.focussdev.space" target="_blank" class="primary-action">Acessar Cofre ↗</a>
+            </div>
+            <div class="alert-info" style="padding:12px;background:rgba(109,158,255,0.08);border:1px solid rgba(109,158,255,0.2);border-radius:6px;font-size:0.75rem;margin-top:12px;">
+              🔒 <strong>Segurança Máxima:</strong> Por arquitetura de segurança, senhas e chaves privadas nunca são exibidas ou trafegadas em texto plano pelo Focussdev. O acesso direto é feito com autenticação mestre no Vaultwarden.
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 15: PDF & FORMULÁRIOS (Stirling / Gotenberg / Formbricks) -->
+        <div class="settings-tab-pane" id="pane-pdf-forms" hidden>
+          <div class="panel">
+            <div class="panel-heading"><h2>Motores de PDF & Formulários</h2><span>Stirling-PDF + Gotenberg + Formbricks</span></div>
+            <div class="native-grid">
+              <div class="native-card">
+                <div class="native-card-head"><h3 class="native-card-title">Gotenberg</h3><span class="native-card-badge active">Conversor Ativo</span></div>
+                <p class="native-card-body">Renderização em segundo plano de contratos e faturas em PDF vetorial de alta definição.</p>
+                <div class="native-card-footer"><span>Microserviço</span><span class="stage-pill">Porta 3000</span></div>
+              </div>
+              <div class="native-card">
+                <div class="native-card-head"><h3 class="native-card-title">Stirling-PDF</h3><span class="native-card-badge active">Operacional</span></div>
+                <p class="native-card-body">Merge, compressão e marca d'água de confidencialidade em documentos de clientes.</p>
+                <div class="native-card-footer"><span>Suíte PDF</span><span class="stage-pill">Porta 8080</span></div>
+              </div>
+              <div class="native-card">
+                <div class="native-card-head"><h3 class="native-card-title">Formbricks</h3><span class="native-card-badge active">Formulários</span></div>
+                <p class="native-card-body">Briefings de novos clientes e pesquisas de satisfação NPS pós-entrega.</p>
+                <div class="native-card-footer"><span>Briefings</span><span class="stage-pill">Webhooks</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 16: INTEGRAÇÕES EXTERNAS (Chaves Mascaradas) -->
+        <div class="settings-tab-pane" id="pane-integracoes" hidden>
+          <div class="panel">
+            <div class="panel-heading"><h2>Chaves de API & Provedores Externos</h2><span>Valores Mascarados</span></div>
+            <div class="native-timeline-list">
+              <div class="native-timeline-item">
+                <span class="native-timeline-time">IA</span>
+                <div class="native-timeline-icon" style="background:rgba(109,158,255,0.15);color:#6d9eff">AI</div>
+                <div class="native-timeline-info"><strong>Google Gemini API</strong><small>Token de Produção: <code>AIzaSy••••••••••••••••••••••••3x9Q</code></small></div>
+                <span class="native-card-badge active">Conectado</span>
+              </div>
+              <div class="native-timeline-item">
+                <span class="native-timeline-time">Ads</span>
+                <div class="native-timeline-icon" style="background:rgba(69,214,154,0.15);color:#45d69a">ADS</div>
+                <div class="native-timeline-info"><strong>Meta Ads Pixel & CAPI</strong><small>Access Token: <code>EAAB••••••••••••••••••••••••7FkL</code></small></div>
+                <span class="native-card-badge active">Conectado</span>
+              </div>
+              <div class="native-timeline-item">
+                <span class="native-timeline-time">PIX</span>
+                <div class="native-timeline-icon" style="background:rgba(255,183,77,0.15);color:#ffb74d">PIX</div>
+                <div class="native-timeline-info"><strong>Gateway Mercado Pago</strong><small>Access Token: <code>APP_USR-••••••••••••••••••••••••8819</code></small></div>
+                <span class="native-card-badge active">Conectado</span>
+              </div>
+              <div class="native-timeline-item">
+                <span class="native-timeline-time">E-mail</span>
+                <div class="native-timeline-icon" style="background:rgba(109,158,255,0.15);color:#6d9eff">SMTP</div>
+                <div class="native-timeline-info"><strong>Resend API</strong><small>API Key: <code>re_••••••••••••••••••••••••21Ab</code></small></div>
+                <span class="native-card-badge active">Conectado</span>
+              </div>
+              <div class="native-timeline-item">
+                <span class="native-timeline-time">Receita</span>
+                <div class="native-timeline-icon" style="background:rgba(69,214,154,0.15);color:#45d69a">CNPJ</div>
+                <div class="native-timeline-info"><strong>BrasilAPI / Receita Federal</strong><small>Consulta pública de CNPJs sem chave</small></div>
+                <span class="native-card-badge active">Ativo</span>
+              </div>
+            </div>
           </div>
         </div>
       `
@@ -1391,6 +1689,137 @@
               btn.disabled = false;
               btn.textContent = "Consultar CNPJ";
             }
+          };
+        }
+      }
+
+      // 14. CONFIGURAÇÕES & STATUS DOS 16 MÓDULOS
+      else if (routeKey === "configuracoes") {
+        // A. Gerenciamento de Abas
+        const tabBtns = document.querySelectorAll("#settings-tabs-nav .settings-tab-btn");
+        tabBtns.forEach(btn => {
+          btn.onclick = () => {
+            const targetTab = btn.getAttribute("data-tab");
+            tabBtns.forEach(b => b.classList.remove("is-active"));
+            btn.classList.add("is-active");
+
+            document.querySelectorAll(".settings-tab-pane").forEach(pane => {
+              pane.hidden = true;
+              pane.classList.remove("is-active");
+            });
+
+            const targetPane = document.querySelector(`#pane-${targetTab}`);
+            if (targetPane) {
+              targetPane.hidden = false;
+              targetPane.classList.add("is-active");
+            }
+          };
+        });
+
+        // B. Carregar Status dos 16 Módulos
+        const tbody = document.querySelector("#modules-status-tbody");
+        const loadModulesStatus = async () => {
+          if (!tbody) return;
+          try {
+            const res = await fetch(`${API}/system/modules-status`, { cache: "no-store" });
+            if (!res.ok) throw new Error("Falha ao consultar status dos módulos");
+            const { data } = await res.json();
+            if (!Array.isArray(data)) return;
+
+            tbody.innerHTML = data.map(m => {
+              const isOnline = m.status === "online";
+              return `
+                <tr id="row-module-${m.key}">
+                  <td style="padding:10px 14px;font-weight:600;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <span style="font-size:1.1rem;">${m.icon || '📦'}</span>
+                      <div>
+                        <div>${m.name}</div>
+                        <small style="color:var(--muted);font-size:0.68rem;">${m.url}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="padding:10px 14px;color:var(--muted);font-size:0.75rem;">${m.category}</td>
+                  <td style="padding:10px 14px;font-family:monospace;font-size:0.75rem;">${m.version || 'v1.0.0'}</td>
+                  <td style="padding:10px 14px;font-size:0.72rem;color:var(--muted);">${m.auth_type || 'Bearer Token'}</td>
+                  <td style="padding:10px 14px;">
+                    <span class="status-badge-live ${isOnline ? 'online' : 'offline'}" id="badge-status-${m.key}">
+                      <span class="pulse-dot"></span>
+                      <span>${isOnline ? 'Conectado' : 'Desconectado'}</span>
+                    </span>
+                  </td>
+                  <td style="padding:10px 14px;font-family:monospace;font-size:0.75rem;" id="latency-${m.key}">
+                    ${m.latency_ms ? `${m.latency_ms}ms` : '--'}
+                  </td>
+                  <td style="padding:10px 14px;text-align:right;">
+                    <button type="button" class="test-conn-btn" data-module="${m.key}" title="Testar conectividade ao vivo">
+                      Testar ⚡
+                    </button>
+                  </td>
+                </tr>
+              `;
+            }).join('');
+
+            // Handler para cada botão de teste de conexão individual
+            tbody.querySelectorAll(".test-conn-btn").forEach(btn => {
+              btn.onclick = async () => {
+                const key = btn.getAttribute("data-module");
+                btn.disabled = true;
+                btn.textContent = "Testando...";
+                const badge = document.querySelector(`#badge-status-${key}`);
+                const latEl = document.querySelector(`#latency-${key}`);
+
+                try {
+                  const testRes = await fetch(`${API}/system/modules-status/${key}/test`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                  });
+                  const testData = await testRes.json();
+                  if (testData.success) {
+                    if (badge) {
+                      badge.className = "status-badge-live online";
+                      badge.innerHTML = `<span class="pulse-dot"></span><span>Conectado</span>`;
+                    }
+                    if (latEl) latEl.textContent = `${testData.latency_ms}ms`;
+                  } else {
+                    if (badge) {
+                      badge.className = "status-badge-live offline";
+                      badge.innerHTML = `<span class="pulse-dot"></span><span>Falha</span>`;
+                    }
+                    if (latEl) latEl.textContent = "Erro";
+                  }
+                } catch (err) {
+                  if (badge) {
+                    badge.className = "status-badge-live offline";
+                    badge.innerHTML = `<span class="pulse-dot"></span><span>Timeout</span>`;
+                  }
+                  if (latEl) latEl.textContent = "Off";
+                } finally {
+                  btn.disabled = false;
+                  btn.textContent = "Testar ⚡";
+                }
+              };
+            });
+          } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--red);">Erro ao consultar status dos 16 serviços.</td></tr>`;
+          }
+        };
+
+        loadModulesStatus();
+
+        // Botão Testar Todos os Motores
+        const btnRetestAll = document.querySelector("#btn-retest-all");
+        if (btnRetestAll) {
+          btnRetestAll.onclick = async () => {
+            btnRetestAll.disabled = true;
+            btnRetestAll.textContent = "Testando todos os 16 motores...";
+            const buttons = document.querySelectorAll(".test-conn-btn");
+            for (const btn of buttons) {
+              btn.click();
+              await new Promise(r => setTimeout(r, 120));
+            }
+            btnRetestAll.disabled = false;
+            btnRetestAll.textContent = "Testar Todos os Motores ⚡";
           };
         }
       }

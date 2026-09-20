@@ -566,4 +566,181 @@ h1 { margin-bottom: 9px; font-size: clamp(2rem, 4vw, 3.15rem); line-height: 1; l
   margin-top: 6px;
 }
 
+/* ==========================================================================
+   Central de Configurações do Focussdev & Status dos Módulos
+   ========================================================================== */
+.settings-tabs-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 2px 12px 2px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  scrollbar-width: thin;
+}
+
+.settings-tabs-bar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.settings-tabs-bar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.settings-tab-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  padding: 7px 14px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 120ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.settings-tab-btn.is-active {
+  background: rgba(109, 158, 255, 0.15);
+  color: #6d9eff;
+  border-color: rgba(109, 158, 255, 0.4);
+  box-shadow: 0 0 12px rgba(109, 158, 255, 0.2);
+}
+
+.settings-tab-pane {
+  animation: fadeIn 150ms ease;
+}
+
+.settings-tab-pane[hidden] {
+  display: none !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.settings-status-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.settings-status-table th {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 14px;
+}
+
+.settings-status-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.78rem;
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.settings-status-table tbody tr {
+  transition: background 120ms ease;
+}
+
+.settings-status-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.settings-input {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: #6d9eff;
+  box-shadow: 0 0 0 3px rgba(109, 158, 255, 0.15);
+}
+
+.status-badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.status-badge-live.online {
+  background: rgba(69, 214, 154, 0.15);
+  color: #45d69a;
+  border: 1px solid rgba(69, 214, 154, 0.3);
+}
+
+.status-badge-live.offline {
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.status-badge-live .pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-badge-live.online .pulse-dot {
+  background: #45d69a;
+  box-shadow: 0 0 6px #45d69a;
+}
+
+.status-badge-live.offline .pulse-dot {
+  background: #f87171;
+}
+
+.test-conn-btn {
+  background: rgba(109, 158, 255, 0.1);
+  border: 1px solid rgba(109, 158, 255, 0.3);
+  color: #6d9eff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.test-conn-btn:hover {
+  background: rgba(109, 158, 255, 0.25);
+  color: #fff;
+  border-color: #6d9eff;
+}
+
+.test-conn-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
 
