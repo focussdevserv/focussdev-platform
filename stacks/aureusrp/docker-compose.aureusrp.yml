@@ -1,0 +1,156 @@
+version: '3.9'
+
+services:
+  aureusrp:
+    image: aureusrp:latest  # TODO: Confirmar imagem e versão
+    container_name: focussdev_aureusrp
+    restart: unless-stopped
+
+    environment:
+      # Banco de dados
+      DATABASE_URL: postgresql://aureusrp_user:${AUREUSRP_DB_PASSWORD}@aureusrp-db:5432/aureusrp_db
+      POSTGRES_USER: aureusrp_user
+      POSTGRES_PASSWORD: ${AUREUSRP_DB_PASSWORD}
+
+      # Autenticação (Authentik OIDC)
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+      OIDC_DISCOVERY_URL: https://auth.focussdev.space/.well-known/openid-configuration
+      OIDC_REDIRECT_URI: https://erp.focussdev.space/auth/callback
+
+      # Supabase (armazenamento de documentos)
+      SUPABASE_URL: https://supabase.focussdev.space
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+
+      # Integration Service (webhooks)
+      INTEGRATION_SERVICE_URL: http://integration-service:3000
+      INTEGRATION_SERVICE_API_KEY: ${INTEGRATION_SERVICE_API_KEY}
+
+      # Mercado Pago (futura integração)
+      MERCADO_PAGO_ACCESS_TOKEN: ${MERCADO_PAGO_ACCESS_TOKEN:-}
+
+      # Node env
+      NODE_ENV: production
+      LOG_LEVEL: info
+
+    ports:
+      - "3001:3000"  # Porta interna (proxy via Traefik)
+
+    volumes:
+      - aureusrp-data:/app/data
+      - aureusrp-logs:/app/logs
+
+    depends_on:
+      - aureusrp-db
+
+    networks:
+      - focussdev-network
+
+    labels:
+      # Traefik routing
+      traefik.enable: "true"
+      traefik.http.routers.aureusrp.rule: Host(`erp.focussdev.space`)
+      traefik.http.routers.aureusrp.entrypoints: websecure
+      traefik.http.routers.aureusrp.tls.certresolver: letsencrypt
+      traefik.http.services.aureusrp.loadbalancer.server.port: "3000"
+
+      # Healthcheck
+      traefik.http.services.aureusrp.loadbalancer.healthcheck.path: /health
+      traefik.http.services.aureusrp.loadbalancer.healthcheck.interval: 30s
+      traefik.http.services.aureusrp.loadbalancer.healthcheck.timeout: 5s
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  aureusrp-db:
+    image: postgres:17.6-alpine
+    container_name: focussdev_aureusrp-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: aureusrp_user
+      POSTGRES_PASSWORD: ${AUREUSRP_DB_PASSWORD}
+      POSTGRES_DB: aureusrp_db
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=pt_BR.UTF-8 --lc-ctype=pt_BR.UTF-8"
+
+    volumes:
+      - aureusrp-db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    networks:
+      - focussdev-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aureusrp_user -d aureusrp_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  aureusrp-backup:
+    image: alpine:3.20
+    container_name: focussdev_aureusrp-backup
+    restart: unless-stopped
+
+    entrypoint: |
+      sh -c "
+      apk add --no-cache postgresql-client gzip
+      while true; do
+        BACKUP_DIR=/backups/$(date +\%Y\%m\%d_\%H\%M\%S)
+        mkdir -p \$BACKUP_DIR
+
+        # Backup banco
+        pg_dump -h aureusrp-db -U aureusrp_user -d aureusrp_db | gzip -9 > \$BACKUP_DIR/aureusrp.sql.gz
+
+        # Backup dados da aplicação
+        tar czf \$BACKUP_DIR/aureusrp-data.tar.gz /app-data
+
+        echo \"✅ Backup em \$BACKUP_DIR\"
+
+        # Manter apenas últimos 30 dias
+        find /backups -type d -mtime +30 -exec rm -rf {} \;
+
+        # Aguardar próximo backup (daily)
+        sleep 86400
+      done
+      "
+
+    volumes:
+      - aureusrp-db-data:/app-data:ro
+      - /var/backups/focussdev/aureusrp:/backups
+
+    depends_on:
+      - aureusrp-db
+
+    networks:
+      - focussdev-network
+
+volumes:
+  aureusrp-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/aureusrp/app
+
+  aureusrp-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/logs/focussdev/aureusrp
+
+  aureusrp-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/aureusrp/postgres
+
+networks:
+  focussdev-network:
+    external: true
