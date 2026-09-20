@@ -14,6 +14,21 @@ Este repositório não replica interfaces dos produtos integrados. Cada aplicaç
 - Checkpoint obrigatório antes de avançar.
 - Segredos nunca entram no Git.
 
+## Limite de operação
+
+Este repositório autoriza mudanças somente nos recursos exclusivos do novo Focussdev:
+
+- diretórios sob `/opt/focussdev` e `/var/backups/focussdev`;
+- projetos/serviços `focussdev`, `focussdevcrm` e `focussdev_supabase`;
+- domínios e rotas de `*.focussdev.space`;
+- repositório `focussdevserv/focussdev-platform` e aplicações documentadas nos checkpoints.
+
+São protegidos e ficam fora do escopo: `credmaisapp`, `evolutions`, `botscassino`, outros projetos
+da VPS, a instalação global do EasyPanel/Traefik/Docker e credenciais globais do servidor. Uma
+mudança compartilhada só pode acrescentar a rota/rede estritamente necessária ao Focussdev e deve
+provar que os demais consumidores permaneceram intactos. Senha root, firewall global, sistema
+operacional e reinício da VPS não mudam sem autorização específica.
+
 ## Estrutura
 
 - `docs/`: arquitetura, inventário e operação.

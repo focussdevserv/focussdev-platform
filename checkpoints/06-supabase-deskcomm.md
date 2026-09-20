@@ -46,3 +46,5 @@ Estado: em andamento; instalação concluída, publicação e jornada real pende
   e anexada à VPS `1257466` pela API Hostinger, mas o servidor existente ainda a recusa; anexar na
   conta não alterou o `authorized_keys` da instalação atual.
 - Rotacionar os tokens temporários da Hostinger depois de concluir o acesso automatizado.
+- Não trocar a senha root nem usar um atalho que altere o host inteiro: a autorização vigente
+  alcança somente o projeto Focussdev e seus recursos exclusivos.
