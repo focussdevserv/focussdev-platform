@@ -1,6 +1,7 @@
 const homeView = document.querySelector("#home-view");
 const appView = document.querySelector("#app-view");
 const plannedView = document.querySelector("#planned-view");
+const integrationsView = document.querySelector("#integrations-view");
 const pageTitle = document.querySelector("#page-title");
 const appFrame = document.querySelector("#app-frame");
 const frameLoading = document.querySelector("#frame-loading");
@@ -9,7 +10,7 @@ const plannedTitle = document.querySelector("#planned-title");
 const sidebar = document.querySelector("#sidebar");
 const sidebarScrim = document.querySelector("#sidebar-scrim");
 
-const views = [homeView, appView, plannedView];
+const views = [homeView, appView, plannedView, integrationsView];
 
 function showView(view) {
   views.forEach((item) => { item.hidden = item !== view; });
@@ -46,12 +47,20 @@ function showPlanned(name) {
   history.replaceState({ view: "planned", name }, "", `#implantacao-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`);
 }
 
+function showIntegrations() {
+  showView(integrationsView);
+  pageTitle.textContent = "Integrações";
+  document.querySelectorAll('[data-route="integrations"]').forEach((item) => item.classList.add("is-active"));
+  history.replaceState({ view: "integrations" }, "", "#integracoes");
+}
+
 function closeSidebar() {
   sidebar.classList.remove("is-open");
   sidebarScrim.hidden = true;
 }
 
 document.querySelectorAll("[data-route='home']").forEach((item) => item.addEventListener("click", showHome));
+document.querySelectorAll("[data-route='integrations']").forEach((item) => item.addEventListener("click", showIntegrations));
 document.querySelectorAll("[data-app]").forEach((item) => item.addEventListener("click", () => showApp(item)));
 document.querySelectorAll("[data-planned]").forEach((item) => item.addEventListener("click", () => showPlanned(item.dataset.planned)));
 document.querySelectorAll(".nav-group-trigger").forEach((trigger) => {
@@ -79,8 +88,40 @@ const commands = [
   { label: "Contratos", area: "Documenso · em implantação", action: () => showPlanned("Documenso") },
   { label: "Suporte", area: "FreeScout · em implantação", action: () => showPlanned("FreeScout") },
   { label: "Código", area: "Forgejo · em implantação", action: () => showPlanned("Forgejo") },
-  { label: "Integrações", area: "Focussdev Integration Service · em implantação", action: () => showPlanned("Focussdev Integration Service") },
+  { label: "Integrações", area: "Focussdev Integration Service · em implantação", action: showIntegrations },
 ];
+
+const integrationGroups = [
+  ["Comercial", [["DeskcommCRM", "CRM"], ["Documenso", "DOC"]]],
+  ["Financeiro", [["AureusERP", "ERP"], ["Mercado Pago", "MP"], ["NFS-e", "NF"]]],
+  ["Desenvolvimento", [["Plane", "PL"], ["Forgejo", "GIT"], ["GitHub", "GH"]]],
+  ["Marketing", [["Meta", "META"], ["Google Ads", "ADS"]]],
+  ["Comunicação", [["WAHA", "WA"], ["Evolution API dedicada", "EV"], ["Resend", "RE"], ["Google Calendar", "GC"]]],
+  ["Suporte", [["FreeScout", "FS"]]],
+  ["Infraestrutura", [["Supabase", "DB"], ["Uptime Kuma", "UP"], ["BookStack", "BS"]]],
+  ["Serviços externos", [["BrasilAPI", "BR"], ["ReceitaWS", "RWS"]]],
+];
+
+function renderIntegrationCatalog() {
+  const root = document.querySelector("#integration-groups");
+  integrationGroups.forEach(([groupName, integrations]) => {
+    const section = document.createElement("section");
+    section.className = "integration-group";
+    const title = document.createElement("h2");
+    title.textContent = groupName;
+    section.append(title);
+    integrations.forEach(([name, symbol]) => {
+      const card = document.createElement("article");
+      card.className = "integration-card";
+      const requirement = name === "Uptime Kuma" ? "Webhook oficial a configurar" : "Versão e API oficial a validar";
+      card.innerHTML = `<span class="integration-symbol">${symbol}</span><span class="integration-copy"><strong>${name}</strong><small>${requirement}</small></span><span class="integration-status">Desconectado</span><span class="integration-meta"><small>Última sincronização</small><strong>—</strong></span><span class="integration-meta"><small>Erros</small><strong>0</strong></span><button type="button" disabled>Testar conexão</button>`;
+      section.append(card);
+    });
+    root.append(section);
+  });
+}
+
+renderIntegrationCatalog();
 
 function renderCommands(query = "") {
   const normalized = query.trim().toLocaleLowerCase("pt-BR");
@@ -106,4 +147,5 @@ const today = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit"
 document.querySelector("#today-label").textContent = today.toLocaleUpperCase("pt-BR");
 
 if (location.hash === "#uptime") showApp(document.querySelector('[data-app="uptime"]'));
+else if (location.hash === "#integracoes") showIntegrations();
 else showHome();

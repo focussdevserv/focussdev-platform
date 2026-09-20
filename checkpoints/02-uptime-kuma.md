@@ -14,6 +14,7 @@ Status: concluído, funcional e publicado em HTTPS.
 - Porta `127.0.0.1:3001`, sem exposição direta à internet.
 - Rota Traefik exclusiva em `https://status.focussdev.space`.
 - HTTP redirecionado para HTTPS.
+- Incorporação liberada somente para `'self'` e `https://app.focussdev.space` por CSP do Traefik.
 - Usuário administrativo criado pelo proprietário; senha não foi compartilhada ou registrada.
 
 ## 3. Integrações realizadas
@@ -51,6 +52,8 @@ Status: concluído, funcional e publicado em HTTPS.
 - `/api/entry-page`: HTTP 200.
 - HTTP → HTTPS: 301.
 - WebSocket por Traefik: `101 Switching Protocols`.
+- Prova no shell em produção: iframe carregado, login original preservado, Socket.IO conectado e
+  console sem erros ou avisos.
 - Banco SQLite e migrations: aprovados.
 - Usuário: uma conta persistente confirmada sem expor identificador ou senha.
 - Reinício: uma conta antes e depois; container voltou saudável.

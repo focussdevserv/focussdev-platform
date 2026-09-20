@@ -1,8 +1,9 @@
 # Arquitetura do ecossistema Focussdev
 
-O Hub é somente a porta de entrada. Ele nunca substitui os dashboards das aplicações. Os links
-ativos levam ao frontend upstream completo em subdomínios independentes; Authentik fornece SSO
-somente onde o protocolo oficial da aplicação for compatível.
+O Hub é o shell visual único. Ele nunca substitui os dashboards das aplicações. O menu permanece
+fixo e a área central carrega o frontend upstream completo quando isso é oficialmente compatível e
+seguro; caso contrário, usa o domínio independente sem modificar o código original. Authentik
+fornece SSO somente onde o protocolo oficial da aplicação for compatível.
 
 ```mermaid
 flowchart LR
@@ -34,7 +35,8 @@ flowchart LR
 ## Regras do mapa
 
 - Entrada: usuário autenticado acessa `app.focussdev.space`.
-- Saída: cada módulo disponível abre o domínio da aplicação original.
+- Saída: cada módulo disponível abre a aplicação original na área central quando tecnicamente
+  seguro; a URL independente permanece como rota de contingência.
 - Módulo não concluído: visível como `Em implantação`, sem link enganoso.
 - Operação: mudanças em `hub/` na `main` publicam automaticamente no Cloudflare Pages.
 - Segredos: Cloudflare API Token existe somente no cofre local criptografado e no GitHub Actions

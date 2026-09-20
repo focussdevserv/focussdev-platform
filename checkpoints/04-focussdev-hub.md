@@ -8,8 +8,8 @@ Data: 2026-09-20
 - Projeto Cloudflare Pages `focussdev-hub`.
 - Workflow GitHub Actions para publicação automática da `main`.
 
-O Hub não implementa funções de CRM, ERP, projetos, contratos, Git, suporte, documentação,
-monitoramento, cofre, automação, WhatsApp ou banco. Ele é apenas navegação.
+O Hub não reimplementa funções de CRM, ERP, projetos, contratos, Git, suporte, documentação,
+monitoramento, cofre, WhatsApp ou banco. Ele é o shell visual e preserva as aplicações originais.
 
 ## 2. O que foi configurado
 
@@ -52,9 +52,9 @@ monitoramento, cofre, automação, WhatsApp ou banco. Ele é apenas navegação.
 
 ## 8. Problemas pendentes
 
-- Aguardar ativação do domínio personalizado e certificado TLS do Cloudflare.
-- Proteger `app.focussdev.space` com autenticação central antes do checkpoint final da stack.
-- Validar visualmente desktop e mobile no domínio definitivo.
+- Proteger `app.focussdev.space` com autenticação central antes do checkpoint final da plataforma.
+- Uptime Kuma 2.5.5 mantém login próprio porque não oferece OIDC/SAML nativo.
+- Validar cada nova aplicação separadamente; não presumir que todas aceitam incorporação segura.
 
 ## 9. Estado atual da arquitetura
 
@@ -91,3 +91,18 @@ Estado: stack concluida. Proxima stack: DeskcommCRM.
 - Secao `Meu dia` com atalhos reais para Authentik, Uptime Kuma e Vaultwarden.
 - Proxima etapa do CRM mostrada como pendente, sem numeros ou dados simulados.
 - QA visual aprovado em desktop (1440px) e mobile (Pixel 7 emulacao Playwright).
+
+## Prova de conceito do shell único — Uptime Kuma
+
+- Commit base: `1213fcb`; endurecimento CSP: `cdeaa4d` e `ccc154c`.
+- Menu lateral persistente publicado em `https://app.focussdev.space`.
+- Conteúdo original de `https://status.focussdev.space/dashboard` carregado na área central.
+- Nenhum componente, dashboard ou navegação interna do Uptime Kuma foi recriado.
+- A navegação interna do upstream não foi ocultada: manipular DOM entre origens quebraria o
+  isolamento do navegador e dificultaria atualizações.
+- Uptime Kuma restringe `frame-ancestors` a `'self'` e `https://app.focussdev.space`.
+- Playwright em produção: iframe acessível, formulário original presente, Socket.IO conectado,
+  requests `200`, telemetria `204` e zero erros/avisos de console.
+- QA visual aprovado em desktop e viewport móvel `390x844`.
+- Rollback: restaurar os arquivos em
+  `/var/backups/focussdev/uptime-kuma/poc-shell/` e recriar somente a stack Uptime Kuma.

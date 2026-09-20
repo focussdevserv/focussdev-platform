@@ -12,3 +12,5 @@ runtime/
 .wrangler/
 .playwright-cli/
 output/playwright/
+node_modules/
+dist/

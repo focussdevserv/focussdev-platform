@@ -105,7 +105,7 @@
               <span class="nav-group-title"><span class="nav-icon">CF</span>Configurações</span><span class="chevron">⌄</span>
             </button>
             <div class="nav-group-items" hidden>
-              <button type="button" data-planned="Focussdev Integration Service">Integrações</button>
+              <button type="button" data-route="integrations">Integrações</button>
               <a href="https://auth.focussdev.space">Usuários e acesso <span aria-hidden="true">↗</span></a>
               <a href="https://cofre.focussdev.space">Credenciais <span aria-hidden="true">↗</span></a>
             </div>
@@ -217,6 +217,20 @@
 
           <section class="planned-view" id="planned-view" hidden aria-live="polite">
             <div class="planned-card"><span class="planned-icon">↻</span><p class="eyebrow">EM IMPLANTAÇÃO</p><h2 id="planned-title">Aplicação</h2><p>Esta área já está no menu único, mas só será ativada depois que domínio, autenticação, persistência e atualização forem validados.</p><button type="button" data-route="home">Voltar para Meu dia</button></div>
+          </section>
+
+          <section class="integrations-view" id="integrations-view" hidden aria-labelledby="integrations-title">
+            <div class="integrations-heading">
+              <div><p class="eyebrow">CONFIGURAÇÕES</p><h1 id="integrations-title">Integrações</h1><p>Conexões diretas por APIs e webhooks oficiais, sem n8n.</p></div>
+              <span class="integration-service-state"><i></i>Base em implantação</span>
+            </div>
+            <div class="integration-summary" aria-label="Resumo das integrações">
+              <article><strong>0</strong><span>conectadas</span></article>
+              <article><strong>20</strong><span>a validar</span></article>
+              <article><strong>0</strong><span>erros ativos</span></article>
+              <article><strong>—</strong><span>última sincronização</span></article>
+            </div>
+            <div class="integration-groups" id="integration-groups"></div>
           </section>
         </main>
       </section>

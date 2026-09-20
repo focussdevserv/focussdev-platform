@@ -1,0 +1,70 @@
+name: focuss-integration-service
+
+services:
+  postgres:
+    image: postgres:17.6-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: focuss_integrations
+      POSTGRES_USER: focuss_integrations
+      POSTGRES_PASSWORD: ${INTEGRATION_DB_PASSWORD:?configure INTEGRATION_DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U focuss_integrations -d focuss_integrations"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    image: ${INTEGRATION_SERVICE_IMAGE:?configure INTEGRATION_SERVICE_IMAGE}
+    command: ["node", "dist/migrate.js"]
+    environment: &service-environment
+      DATABASE_URL: postgresql://focuss_integrations:${INTEGRATION_DB_PASSWORD}@postgres:5432/focuss_integrations
+      INTEGRATION_ADMIN_TOKEN: ${INTEGRATION_ADMIN_TOKEN:?configure INTEGRATION_ADMIN_TOKEN}
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal
+    restart: "no"
+
+  api:
+    image: ${INTEGRATION_SERVICE_IMAGE:?configure INTEGRATION_SERVICE_IMAGE}
+    restart: unless-stopped
+    environment: *service-environment
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - internal
+      - easypanel
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3100/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  worker:
+    image: ${INTEGRATION_SERVICE_IMAGE:?configure INTEGRATION_SERVICE_IMAGE}
+    command: ["node", "dist/worker.js"]
+    restart: unless-stopped
+    environment: *service-environment
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - internal
+
+volumes:
+  postgres-data:
+    name: focuss-integration-service-postgres-data
+
+networks:
+  internal:
+    internal: true
+  easypanel:
+    external: true

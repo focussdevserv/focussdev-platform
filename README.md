@@ -23,7 +23,7 @@ Este repositório autoriza mudanças somente nos recursos exclusivos do novo Foc
 - domínios e rotas de `*.focussdev.space`;
 - repositório `focussdevserv/focussdev-platform` e aplicações documentadas nos checkpoints.
 
-São protegidos e ficam fora do escopo: `credmaisapp`, `evolutions`, `botscassino`, outros projetos
+São protegidos e ficam fora do escopo: `credmaisapp`, `evolutions` e outros projetos
 da VPS, a instalação global do EasyPanel/Traefik/Docker e credenciais globais do servidor. Uma
 mudança compartilhada só pode acrescentar a rota/rede estritamente necessária ao Focussdev e deve
 provar que os demais consumidores permaneceram intactos. Senha root, firewall global, sistema
@@ -34,8 +34,8 @@ operacional e reinício da VPS não mudam sem autorização específica.
 - `docs/`: arquitetura, inventário e operação.
 - `checkpoints/`: estado verificável de cada stack.
 - `stacks/`: manifests externos, sem cópia do código upstream.
-- `hub/`: única interface própria, limitada à entrada e navegação.
-- `integrations/`: workflows e contratos de eventos.
+- `hub/`: shell único com menu persistente e área central para aplicações originais compatíveis.
+- `services/integration-service/`: APIs, webhooks, fila durável, retries e auditoria próprios.
 
 ## Acessos disponíveis
 
