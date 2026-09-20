@@ -844,5 +844,286 @@ export function registerPlatformCoreRoutes(app: FastifyInstance, pool: pg.Pool) 
       },
     });
   });
+
+  // ===========================================================================
+  // 10. MÓDULOS UNIFICADOS NATIVOS (PROJETOS, CRM, FINANCEIRO, WIKI, SUPORTE)
+  // ===========================================================================
+
+  // GET /v1/tasks
+  app.get("/v1/tasks", async (request: FastifyRequest, reply: FastifyReply) => {
+    const querySchema = z.object({
+      project_id: z.string().optional(),
+      status: z.string().optional(),
+      limit: z.coerce.number().int().min(1).max(100).default(50),
+    });
+    const parsed = querySchema.safeParse(request.query);
+    const { project_id, status, limit } = parsed.success ? parsed.data : { limit: 50, project_id: undefined, status: undefined };
+
+    let query = "SELECT * FROM platform_tasks WHERE 1=1";
+    const params: any[] = [];
+    if (project_id) {
+      params.push(project_id);
+      query += ` AND project_id = $${params.length}`;
+    }
+    if (status) {
+      params.push(status);
+      query += ` AND status = $${params.length}`;
+    }
+    params.push(limit);
+    query += ` ORDER BY created_at DESC LIMIT $${params.length}`;
+
+    const res = await pool.query(query, params);
+    return reply.send({ data: res.rows });
+  });
+
+  // POST /v1/tasks
+  app.post("/v1/tasks", async (request: FastifyRequest, reply: FastifyReply) => {
+    const bodySchema = z.object({
+      title: z.string().min(1),
+      description: z.string().optional(),
+      project_id: z.string().optional(),
+      client_id: z.string().optional(),
+      status: z.enum(["backlog", "todo", "in_progress", "review", "done"]).default("todo"),
+      priority: z.enum(["low", "medium", "high", "urgent"]).default("medium"),
+      assignee: z.string().optional().default("Gustavo Lopes"),
+      due_date: z.string().optional(),
+    });
+
+    const parsed = bodySchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: "invalid_body", details: parsed.error.issues });
+
+    const d = parsed.data;
+    const res = await pool.query(
+      `INSERT INTO platform_tasks (title, description, project_id, client_id, status, priority, assignee, due_date, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+       RETURNING *`,
+      [d.title, d.description || null, d.project_id || null, d.client_id || null, d.status, d.priority, d.assignee, d.due_date || null]
+    );
+
+    return reply.code(201).send({ data: res.rows[0] });
+  });
+
+  // PATCH /v1/tasks/:id
+  app.patch("/v1/tasks/:id", async (request: FastifyRequest, reply: FastifyReply) => {
+    const params = z.object({ id: z.string() }).safeParse(request.params);
+    if (!params.success) return reply.code(400).send({ error: "invalid_id" });
+
+    const bodySchema = z.object({
+      status: z.enum(["backlog", "todo", "in_progress", "review", "done"]).optional(),
+      priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
+      title: z.string().optional(),
+      description: z.string().optional(),
+    });
+    const parsed = bodySchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: "invalid_body" });
+
+    const d = parsed.data;
+    const res = await pool.query(
+      `UPDATE platform_tasks 
+       SET status = COALESCE($1, status),
+           priority = COALESCE($2, priority),
+           title = COALESCE($3, title),
+           description = COALESCE($4, description),
+           updated_at = NOW()
+       WHERE id::text = $5 RETURNING *`,
+      [d.status || null, d.priority || null, d.title || null, d.description || null, params.data.id]
+    );
+
+    if (res.rows.length === 0) return reply.code(404).send({ error: "task_not_found" });
+    return reply.send({ data: res.rows[0] });
+  });
+
+  // GET /v1/deals
+  app.get("/v1/deals", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_deals ORDER BY created_at DESC");
+    return reply.send({ data: res.rows });
+  });
+
+  // POST /v1/deals
+  app.post("/v1/deals", async (request: FastifyRequest, reply: FastifyReply) => {
+    const bodySchema = z.object({
+      title: z.string().min(1),
+      value_cents: z.number().int().nonnegative().default(0),
+      stage: z.enum(["lead", "qualified", "proposal", "negotiation", "won", "lost"]).default("lead"),
+      contact_name: z.string().optional(),
+      contact_phone: z.string().optional(),
+      contact_email: z.string().optional(),
+      channel: z.string().default("whatsapp"),
+    });
+    const parsed = bodySchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: "invalid_body" });
+
+    const d = parsed.data;
+    const res = await pool.query(
+      `INSERT INTO platform_deals (title, value_cents, stage, contact_name, contact_phone, contact_email, channel, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+       RETURNING *`,
+      [d.title, d.value_cents, d.stage, d.contact_name || null, d.contact_phone || null, d.contact_email || null, d.channel]
+    );
+    return reply.code(201).send({ data: res.rows[0] });
+  });
+
+  // PATCH /v1/deals/:id
+  app.patch("/v1/deals/:id", async (request: FastifyRequest, reply: FastifyReply) => {
+    const params = z.object({ id: z.string() }).safeParse(request.params);
+    if (!params.success) return reply.code(400).send({ error: "invalid_id" });
+
+    const bodySchema = z.object({
+      stage: z.enum(["lead", "qualified", "proposal", "negotiation", "won", "lost"]).optional(),
+      value_cents: z.number().int().nonnegative().optional(),
+    });
+    const parsed = bodySchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: "invalid_body" });
+
+    const d = parsed.data;
+    const res = await pool.query(
+      `UPDATE platform_deals 
+       SET stage = COALESCE($1, stage),
+           value_cents = COALESCE($2, value_cents),
+           updated_at = NOW()
+       WHERE id::text = $3 RETURNING *`,
+      [d.stage || null, d.value_cents ?? null, params.data.id]
+    );
+    if (res.rows.length === 0) return reply.code(404).send({ error: "deal_not_found" });
+    return reply.send({ data: res.rows[0] });
+  });
+
+  // GET /v1/invoices
+  app.get("/v1/invoices", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_invoices ORDER BY due_date ASC");
+    return reply.send({ data: res.rows });
+  });
+
+  // POST /v1/invoices
+  app.post("/v1/invoices", async (request: FastifyRequest, reply: FastifyReply) => {
+    const bodySchema = z.object({
+      title: z.string().min(1),
+      amount_cents: z.number().int().positive(),
+      due_date: z.string(),
+      client_id: z.string().optional(),
+      project_id: z.string().optional(),
+    });
+    const parsed = bodySchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: "invalid_body" });
+
+    const d = parsed.data;
+    const invNum = `FAT-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
+    const pix = `00020126580014br.gov.bcb.pix0136focussdev-pix-key5204000053039865407${(d.amount_cents / 100).toFixed(2)}5802BR5910FOCUSSDEV6009SAO_PAULO62070503***6304ABCD`;
+
+    const res = await pool.query(
+      `INSERT INTO platform_invoices (invoice_number, title, amount_cents, due_date, client_id, project_id, status, pix_code, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7, NOW())
+       RETURNING *`,
+      [invNum, d.title, d.amount_cents, d.due_date, d.client_id || null, d.project_id || null, pix]
+    );
+    return reply.code(201).send({ data: res.rows[0] });
+  });
+
+  // GET /v1/wiki
+  app.get("/v1/wiki", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_wiki_articles ORDER BY created_at DESC");
+    return reply.send({ data: res.rows });
+  });
+
+  // GET /v1/tickets
+  app.get("/v1/tickets", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_tickets ORDER BY created_at DESC");
+    return reply.send({ data: res.rows });
+  });
+
+  // GET /v1/contracts (Documenso)
+  app.get("/v1/contracts", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_contracts ORDER BY created_at DESC");
+    return reply.send({ data: res.rows });
+  });
+
+  // POST /v1/contracts (Documenso)
+  app.post("/v1/contracts", async (request: FastifyRequest, reply: FastifyReply) => {
+    const bodySchema = z.object({
+      title: z.string().min(1),
+      client_name: z.string().min(1),
+      document_type: z.string().default("prestacao_servicos"),
+      amount_cents: z.number().int().nonnegative().default(0),
+    });
+    const parsed = bodySchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: "invalid_body" });
+    const d = parsed.data;
+    const signUrl = `https://docs.focussdev.space/d/doc-${Date.now().toString().slice(-6)}`;
+    const res = await pool.query(
+      `INSERT INTO platform_contracts (title, client_name, document_type, amount_cents, status, sign_url, updated_at)
+       VALUES ($1, $2, $3, $4, 'pending_signature', $5, NOW()) RETURNING *`,
+      [d.title, d.client_name, d.document_type, d.amount_cents, signUrl]
+    );
+    return reply.code(201).send({ data: res.rows[0] });
+  });
+
+  // GET /v1/deploys (Forgejo / Git)
+  app.get("/v1/deploys", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_deploys ORDER BY deployed_at DESC LIMIT 50");
+    return reply.send({ data: res.rows });
+  });
+
+  // GET /v1/monitors (Uptime Kuma / Beszel)
+  app.get("/v1/monitors", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_monitors ORDER BY name ASC");
+    return reply.send({ data: res.rows });
+  });
+
+  // GET /v1/vault (Vaultwarden)
+  app.get("/v1/vault", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT id, title, category, username, url, notes, created_at FROM platform_vault_items ORDER BY category ASC, title ASC");
+    return reply.send({ data: res.rows });
+  });
+
+  // GET /v1/team (Authentik)
+  app.get("/v1/team", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_team_members ORDER BY name ASC");
+    return reply.send({ data: res.rows });
+  });
+
+  // GET /v1/whatsapp (WAHA)
+  app.get("/v1/whatsapp", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_whatsapp_sessions ORDER BY session_name ASC");
+    return reply.send({ data: res.rows });
+  });
+
+  // GET /v1/automations (N8N)
+  app.get("/v1/automations", async (_request: FastifyRequest, reply: FastifyReply) => {
+    const res = await pool.query("SELECT * FROM platform_automations ORDER BY name ASC");
+    return reply.send({ data: res.rows });
+  });
+
+  // GET /v1/cnpj/:cnpj (Consulta CNPJ - Receita / BrasilAPI)
+  app.get("/v1/cnpj/:cnpj", async (request: FastifyRequest, reply: FastifyReply) => {
+    const params = z.object({ cnpj: z.string() }).safeParse(request.params);
+    if (!params.success) return reply.code(400).send({ error: "invalid_cnpj" });
+    const cleanCnpj = params.data.cnpj.replace(/\D/g, "");
+    
+    // Verificar cache no banco
+    const cached = await pool.query("SELECT * FROM platform_cnpj_queries WHERE cnpj = $1", [cleanCnpj]);
+    if (cached.rows.length > 0) {
+      return reply.send({ data: cached.rows[0] });
+    }
+
+    // Consulta mock enriquecida / fallback
+    const mockData = {
+      cnpj: cleanCnpj,
+      razao_social: "FOCUSSDEV SERVICOS DE TECNOLOGIA LTDA",
+      nome_fantasia: "FOCUSSDEV",
+      situacao: "ATIVA",
+      cnae_principal: "62.01-5-01 - Desenvolvimento de programas de computador sob encomenda",
+      cidade: "São Paulo",
+      uf: "SP"
+    };
+
+    await pool.query(
+      `INSERT INTO platform_cnpj_queries (cnpj, razao_social, nome_fantasia, situacao, cnae_principal, cidade, uf)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (cnpj) DO NOTHING`,
+      [mockData.cnpj, mockData.razao_social, mockData.nome_fantasia, mockData.situacao, mockData.cnae_principal, mockData.cidade, mockData.uf]
+    );
+
+    return reply.send({ data: mockData });
+  });
 }
+
 
