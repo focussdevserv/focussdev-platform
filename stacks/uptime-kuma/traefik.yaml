@@ -20,7 +20,7 @@ http:
     focuss-uptime-kuma-frame-policy:
       headers:
         customResponseHeaders:
-          Content-Security-Policy: "frame-ancestors https://app.focussdev.space"
+          Content-Security-Policy: "frame-ancestors 'self' https://app.focussdev.space"
   services:
     focuss-uptime-kuma:
       loadBalancer:
