@@ -22,3 +22,12 @@ Este repositório não replica interfaces dos produtos integrados. Cada aplicaç
 - `hub/`: única interface própria, limitada à entrada e navegação.
 - `integrations/`: workflows e contratos de eventos.
 
+## Acessos disponíveis
+
+- Hub: `https://app.focussdev.space`
+- Identidade: `https://auth.focussdev.space`
+- Monitoramento: `https://status.focussdev.space`
+- Cofre: `https://cofre.focussdev.space`
+
+Os módulos em implantação aparecem no Hub sem link até a instalação, autenticação e persistência
+serem validadas. Isso impede que um destino incompleto pareça operacional.
