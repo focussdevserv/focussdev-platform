@@ -447,6 +447,10 @@ footer span:first-child {
 }
 
 @media (max-width: 820px) {
+  .hub-nav {
+    display: none;
+  }
+
   .module-grid {
     grid-template-columns: 1fr;
   }
