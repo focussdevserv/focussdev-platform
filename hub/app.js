@@ -29,10 +29,17 @@ function showHome() {
 function showApp(trigger) {
   const url = trigger.dataset.url;
   const title = trigger.dataset.title;
+  const symbol = trigger.dataset.symbol || title.slice(0, 2).toUpperCase();
+  const color = trigger.dataset.color || "blue";
   showView(appView);
   trigger.classList.add("is-active");
   pageTitle.textContent = title;
   document.querySelector("#app-title").textContent = title;
+  document.querySelector("#app-description").textContent = `Aplicação original · ${title}`;
+  document.querySelector("#frame-loading small").textContent = `Conectando com segurança a ${title}…`;
+  const symbolEl = document.querySelector("#app-symbol");
+  symbolEl.textContent = symbol;
+  symbolEl.className = `app-symbol ${color}`;
   appFrame.title = `${title} — aplicação original`;
   frameLoading.hidden = false;
   openOriginal.href = url;
@@ -82,7 +89,7 @@ const commandResults = document.querySelector("#command-results");
 const commands = [
   { label: "Meu dia", area: "Focussdev", action: showHome },
   { label: "Monitoramento", area: "Uptime Kuma · disponível", action: () => showApp(document.querySelector('[data-app="uptime"]')) },
-  { label: "CRM", area: "DeskcommCRM · em implantação", action: () => showPlanned("DeskcommCRM") },
+  { label: "CRM", area: "DeskcommCRM · disponível", action: () => { window.location.href = "https://crm.focussdev.space/app"; } },
   { label: "Financeiro", area: "AureusERP · em implantação", action: () => showPlanned("AureusERP") },
   { label: "Projetos", area: "Plane · em implantação", action: () => showPlanned("Plane") },
   { label: "Contratos", area: "Documenso · em implantação", action: () => showPlanned("Documenso") },
@@ -146,6 +153,8 @@ document.addEventListener("keydown", (event) => {
 const today = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(new Date());
 document.querySelector("#today-label").textContent = today.toLocaleUpperCase("pt-BR");
 
-if (location.hash === "#uptime") showApp(document.querySelector('[data-app="uptime"]'));
-else if (location.hash === "#integracoes") showIntegrations();
+const initialHash = location.hash.slice(1);
+const initialAppTrigger = initialHash ? document.querySelector(`[data-app="${initialHash}"]`) : null;
+if (initialHash === "integracoes") showIntegrations();
+else if (initialAppTrigger) showApp(initialAppTrigger);
 else showHome();
