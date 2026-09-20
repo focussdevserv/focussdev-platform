@@ -1366,9 +1366,22 @@ export function registerPlatformCoreRoutes(app: FastifyInstance, pool: pg.Pool) 
 
   // GET /v1/system/settings (Configurações centrais consolidadas com segredos mascarados)
   app.get("/v1/system/settings", async (_request: FastifyRequest, reply: FastifyReply) => {
+    let settingsRows: any[] = [];
+    try {
+      const res = await pool.query(`SELECT category, settings FROM platform_settings`);
+      settingsRows = res.rows;
+    } catch {
+      // fallback gracioso se tabela não responder
+    }
+
+    const settingsMap: Record<string, any> = {};
+    for (const row of settingsRows) {
+      settingsMap[row.category] = row.settings;
+    }
+
     return reply.send({
       data: {
-        geral: {
+        geral: settingsMap["geral"] || {
           empresa_nome: "Focussdev Serviços de Tecnologia LTDA",
           nome_fantasia: "Focussdev",
           cnpj: "14.829.102/0001-44",
@@ -1384,30 +1397,36 @@ export function registerPlatformCoreRoutes(app: FastifyInstance, pool: pg.Pool) 
           dois_fatores_obrigatorio: true,
           grupos_disponiveis: ["Administradores", "Engenharia", "Comercial", "Suporte", "Clientes"]
         },
-        crm: {
+        crm: settingsMap["crm"] || {
           upstream_url: "https://crm.focussdev.space",
           waha_conectado: true,
           silencio_humano_ativo: true,
           tempo_limite_primeira_resposta_min: 15,
           funis_ativos: ["Novos Projetos SaaS", "Manutenção & MRR", "Parcerias"]
         },
-        projetos: {
+        projetos: settingsMap["projetos"] || {
           upstream_url: "https://projetos.focussdev.space",
           sprint_padrao_dias: 14,
           prioridade_padrao: "medium",
           notificar_atrasos: true
         },
-        financeiro: {
+        financeiro: settingsMap["financeiro"] || {
           upstream_url: "https://erp.focussdev.space",
           chave_pix: "contato@focussdev.com.br",
           banco_padrao: "Banco Inter PJ",
           dias_cobranca_antecipada: 3,
           juros_mora_percentual: 1.0
         },
-        documentos: {
+        documentos: settingsMap["documentos"] || {
           upstream_url: "https://docs.focussdev.space",
           validade_padrao_proposta_dias: 10,
           requerer_carimbo_tempo: true
+        },
+        suporte: settingsMap["suporte"] || {
+          upstream_url: "https://suporte.focussdev.space",
+          sla_urgente_min: 15,
+          sla_padrao_horas: 4,
+          encaminhamento_automatico: true
         },
         seguranca_chaves_mascaradas: {
           google_gemini_api: "AIzaSy••••••••••••••••••••••••3x9Q",
@@ -1416,6 +1435,32 @@ export function registerPlatformCoreRoutes(app: FastifyInstance, pool: pg.Pool) 
           resend_email_api: "re_••••••••••••••••••••••••21Ab",
           cloudflare_api_token: "cf_••••••••••••••••••••••••90cE"
         }
+      }
+    });
+  });
+
+  // PUT /v1/system/settings/:category (Salvar configurações da categoria)
+  app.put("/v1/system/settings/:category", async (request: FastifyRequest, reply: FastifyReply) => {
+    const params = z.object({ category: z.string() }).safeParse(request.params);
+    if (!params.success) return reply.code(400).send({ error: "invalid_category" });
+
+    const category = params.data.category;
+    const body = request.body || {};
+
+    const res = await pool.query(
+      `INSERT INTO platform_settings (category, settings, updated_at)
+       VALUES ($1, $2, NOW())
+       ON CONFLICT (category) DO UPDATE
+       SET settings = EXCLUDED.settings, updated_at = NOW()
+       RETURNING category, settings, updated_at`,
+      [category, JSON.stringify(body)]
+    );
+
+    return reply.send({
+      data: {
+        category: res.rows[0].category,
+        settings: res.rows[0].settings,
+        updated_at: res.rows[0].updated_at
       }
     });
   });

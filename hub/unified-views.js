@@ -911,18 +911,21 @@
           <div class="panel">
             <div class="panel-heading"><h2>Dados Institucionais & Globais</h2><span>Configurações Básicas</span></div>
             <div class="form-row">
-              <div class="form-group"><label>Razão Social</label><input value="Focussdev Serviços de Tecnologia LTDA" class="settings-input" /></div>
-              <div class="form-group"><label>Nome Fantasia</label><input value="Focussdev" class="settings-input" /></div>
+              <div class="form-group"><label>Razão Social</label><input id="setting-empresa-nome" value="Focussdev Serviços de Tecnologia LTDA" class="settings-input" /></div>
+              <div class="form-group"><label>Nome Fantasia</label><input id="setting-nome-fantasia" value="Focussdev" class="settings-input" /></div>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>CNPJ</label><input value="14.829.102/0001-44" class="settings-input" /></div>
-              <div class="form-group"><label>E-mail Corporativo</label><input value="contato@focussdev.com.br" class="settings-input" /></div>
+              <div class="form-group"><label>CNPJ</label><input id="setting-cnpj" value="14.829.102/0001-44" class="settings-input" /></div>
+              <div class="form-group"><label>E-mail Corporativo</label><input id="setting-email" value="contato@focussdev.com.br" class="settings-input" /></div>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>Idioma Padrão</label><select class="settings-input"><option selected>Português do Brasil (pt-BR)</option></select></div>
-              <div class="form-group"><label>Fuso Horário</label><select class="settings-input"><option selected>America/Sao_Paulo (UTC-3 / Brasília)</option></select></div>
+              <div class="form-group"><label>Idioma Padrão</label><select id="setting-idioma" class="settings-input"><option value="pt-BR" selected>Português do Brasil (pt-BR)</option></select></div>
+              <div class="form-group"><label>Fuso Horário</label><select id="setting-fuso-horario" class="settings-input"><option value="America/Sao_Paulo (UTC-3)" selected>America/Sao_Paulo (UTC-3 / Brasília)</option></select></div>
             </div>
-            <button type="button" class="primary-action" onclick="alert('Configurações gerais salvas com sucesso!')" style="margin-top:12px;">Salvar Alterações</button>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:16px;">
+              <button type="button" class="primary-action" id="btn-save-geral">Salvar Alterações Gerais</button>
+              <span id="feedback-save-geral" style="font-size:0.75rem;color:var(--green);display:none;">✓ Configurações salvas no PostgreSQL!</span>
+            </div>
           </div>
         </div>
 
@@ -951,17 +954,13 @@
               <div><h2>Parâmetros Comerciais & CRM</h2><p class="eyebrow" style="margin-top:4px">DeskcommCRM Nativo</p></div>
               <a href="https://crm.focussdev.space/app/settings" target="_blank" class="primary-action">Painel do CRM ↗</a>
             </div>
-            <div class="native-grid" style="margin-top:16px;">
-              <div class="native-card">
-                <div class="native-card-head"><h3 class="native-card-title">Regras de Atendimento</h3><span class="native-card-badge active">Configurado</span></div>
-                <p class="native-card-body">Silêncio humano: Ativo quando atendente assume. Tempo limite primeira resposta: 15 minutos.</p>
-                <div class="native-card-footer"><span>Round-Robin Ativo</span><span class="stage-pill">Fila de Espera</span></div>
-              </div>
-              <div class="native-card">
-                <div class="native-card-head"><h3 class="native-card-title">Funis & Pipelines</h3><span class="native-card-badge active">3 Funis</span></div>
-                <p class="native-card-body">Novos Projetos SaaS, Manutenção & MRR e Parcerias Comerciais.</p>
-                <div class="native-card-footer"><span>Status: Em operação</span><button type="button" class="native-card-action" data-route="funil-vendas">Ver Funil →</button></div>
-              </div>
+            <div class="form-row" style="margin-top:16px;">
+              <div class="form-group"><label>Tempo Limite Primeira Resposta (min)</label><input type="number" id="setting-crm-timeout" value="15" class="settings-input" /></div>
+              <div class="form-group"><label>Silêncio Humano (Pausa Agente IA)</label><select id="setting-crm-silence" class="settings-input"><option value="true" selected>Ativo (Pausa IA quando humano assume)</option><option value="false">Desativado</option></select></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:16px;">
+              <button type="button" class="primary-action" id="btn-save-crm">Salvar Parâmetros do CRM</button>
+              <span id="feedback-save-crm" style="font-size:0.75rem;color:var(--green);display:none;">✓ Parâmetros do CRM salvos!</span>
             </div>
           </div>
         </div>
@@ -974,8 +973,12 @@
               <a href="https://projetos.focussdev.space" target="_blank" class="primary-action">Abrir Plane ↗</a>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>Duração Padrão das Sprints</label><select class="settings-input"><option selected>14 dias (2 semanas)</option><option>7 dias (1 semana)</option></select></div>
-              <div class="form-group"><label>Prioridade Padrão de Tarefa</label><select class="settings-input"><option selected>Média (Medium)</option><option>Alta (High)</option></select></div>
+              <div class="form-group"><label>Duração Padrão das Sprints</label><select id="setting-sprint-days" class="settings-input"><option value="14" selected>14 dias (2 semanas)</option><option value="7">7 dias (1 semana)</option></select></div>
+              <div class="form-group"><label>Prioridade Padrão de Tarefa</label><select id="setting-task-priority" class="settings-input"><option value="medium" selected>Média (Medium)</option><option value="high">Alta (High)</option></select></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:16px;">
+              <button type="button" class="primary-action" id="btn-save-projetos">Salvar Padrões de Projetos</button>
+              <span id="feedback-save-projetos" style="font-size:0.75rem;color:var(--green);display:none;">✓ Padrões de projetos salvos!</span>
             </div>
           </div>
         </div>
@@ -988,12 +991,16 @@
               <a href="https://erp.focussdev.space" target="_blank" class="primary-action">Abrir ERP ↗</a>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>Chave PIX Padrão</label><input value="contato@focussdev.com.br" class="settings-input" /></div>
-              <div class="form-group"><label>Banco Receptor</label><input value="Banco Inter PJ" class="settings-input" /></div>
+              <div class="form-group"><label>Chave PIX Padrão</label><input id="setting-pix-key" value="contato@focussdev.com.br" class="settings-input" /></div>
+              <div class="form-group"><label>Banco Receptor</label><input id="setting-bank-name" value="Banco Inter PJ" class="settings-input" /></div>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>Cobrança Antecipada</label><select class="settings-input"><option selected>3 dias antes do vencimento</option></select></div>
-              <div class="form-group"><label>Juros de Mora (%)</label><input value="1.0% ao mês" class="settings-input" /></div>
+              <div class="form-group"><label>Cobrança Antecipada</label><select id="setting-billing-days" class="settings-input"><option value="3" selected>3 dias antes do vencimento</option><option value="5">5 dias antes do vencimento</option></select></div>
+              <div class="form-group"><label>Juros de Mora (%)</label><input id="setting-interest-rate" value="1.0" class="settings-input" /></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:16px;">
+              <button type="button" class="primary-action" id="btn-save-financeiro">Salvar Regras Financeiras</button>
+              <span id="feedback-save-financeiro" style="font-size:0.75rem;color:var(--green);display:none;">✓ Regras financeiras salvas!</span>
             </div>
           </div>
         </div>
@@ -1006,8 +1013,12 @@
               <a href="https://docs.focussdev.space" target="_blank" class="primary-action">Abrir Documenso ↗</a>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>Validade Padrão das Propostas</label><input value="10 dias úteis" class="settings-input" /></div>
-              <div class="form-group"><label>Carimbo Criptográfico de Tempo</label><select class="settings-input"><option selected>Ativo (SHA-256 ICP-Brasil)</option></select></div>
+              <div class="form-group"><label>Validade Padrão das Propostas (dias)</label><input type="number" id="setting-doc-validity" value="10" class="settings-input" /></div>
+              <div class="form-group"><label>Carimbo Criptográfico de Tempo</label><select id="setting-doc-timestamp" class="settings-input"><option value="true" selected>Ativo (SHA-256 ICP-Brasil)</option><option value="false">Desativado</option></select></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:16px;">
+              <button type="button" class="primary-action" id="btn-save-documentos">Salvar Configurações de Documentos</button>
+              <span id="feedback-save-documentos" style="font-size:0.75rem;color:var(--green);display:none;">✓ Configurações salvas!</span>
             </div>
           </div>
         </div>
@@ -1035,8 +1046,12 @@
               <a href="https://suporte.focussdev.space" target="_blank" class="primary-action">Abrir FreeScout ↗</a>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>SLA Primeiro Atendimento (Urgente)</label><input value="15 minutos" class="settings-input" /></div>
-              <div class="form-group"><label>SLA Resolução Padrão</label><input value="4 horas úteis" class="settings-input" /></div>
+              <div class="form-group"><label>SLA Primeiro Atendimento (Urgente - minutos)</label><input type="number" id="setting-sla-urgent" value="15" class="settings-input" /></div>
+              <div class="form-group"><label>SLA Resolução Padrão (horas úteis)</label><input type="number" id="setting-sla-default" value="4" class="settings-input" /></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:16px;">
+              <button type="button" class="primary-action" id="btn-save-suporte">Salvar Regras de SLA</button>
+              <span id="feedback-save-suporte" style="font-size:0.75rem;color:var(--green);display:none;">✓ SLAs salvos!</span>
             </div>
           </div>
         </div>
@@ -1364,6 +1379,31 @@
         document.querySelector("#metric-tasks-todo strong").textContent = cTodo;
         document.querySelector("#metric-tasks-progress strong").textContent = cProg;
         document.querySelector("#metric-tasks-done strong").textContent = cDone;
+
+        // Botão Nova Tarefa (Integrado via API / PostgreSQL)
+        const btnNovaTarefa = document.querySelector("#btn-nova-tarefa");
+        if (btnNovaTarefa) {
+          btnNovaTarefa.onclick = async () => {
+            const title = prompt("Digite o título da nova tarefa:");
+            if (!title || !title.trim()) return;
+            const prio = prompt("Prioridade (low, medium, high, urgent):", "medium") || "medium";
+            try {
+              const createRes = await fetch(`${API}/tasks`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: title.trim(), priority: prio, status: "todo" })
+              });
+              if (createRes.ok) {
+                alert("Tarefa cadastrada com sucesso no PostgreSQL central!");
+                hydrateNativeRoute("tarefas");
+              } else {
+                alert("Erro ao cadastrar tarefa.");
+              }
+            } catch (err) {
+              alert("Erro de conexão ao criar tarefa.");
+            }
+          };
+        }
       }
 
       // 2. FUNIL DE VENDAS & OPORTUNIDADES (CRM)
@@ -1806,6 +1846,133 @@
         };
 
         loadModulesStatus();
+
+        // C. Carregar Configurações Persistidas do PostgreSQL
+        const loadSettingsData = async () => {
+          try {
+            const res = await fetch(`${API}/system/settings`, { cache: "no-store" });
+            if (!res.ok) return;
+            const { data } = await res.json();
+            if (!data) return;
+
+            // Geral
+            if (data.geral) {
+              const g = data.geral;
+              if (document.querySelector("#setting-empresa-nome")) document.querySelector("#setting-empresa-nome").value = g.empresa_nome || "";
+              if (document.querySelector("#setting-nome-fantasia")) document.querySelector("#setting-nome-fantasia").value = g.nome_fantasia || "";
+              if (document.querySelector("#setting-cnpj")) document.querySelector("#setting-cnpj").value = g.cnpj || "";
+              if (document.querySelector("#setting-email")) document.querySelector("#setting-email").value = g.email_contato || "";
+            }
+
+            // CRM
+            if (data.crm) {
+              const c = data.crm;
+              if (document.querySelector("#setting-crm-timeout")) document.querySelector("#setting-crm-timeout").value = c.tempo_limite_primeira_resposta_min || 15;
+              if (document.querySelector("#setting-crm-silence")) document.querySelector("#setting-crm-silence").value = String(c.silencio_humano_ativo);
+            }
+
+            // Projetos
+            if (data.projetos) {
+              const p = data.projetos;
+              if (document.querySelector("#setting-sprint-days")) document.querySelector("#setting-sprint-days").value = p.sprint_padrao_dias || 14;
+              if (document.querySelector("#setting-task-priority")) document.querySelector("#setting-task-priority").value = p.prioridade_padrao || "medium";
+            }
+
+            // Financeiro
+            if (data.financeiro) {
+              const f = data.financeiro;
+              if (document.querySelector("#setting-pix-key")) document.querySelector("#setting-pix-key").value = f.chave_pix || "";
+              if (document.querySelector("#setting-bank-name")) document.querySelector("#setting-bank-name").value = f.banco_padrao || "";
+              if (document.querySelector("#setting-billing-days")) document.querySelector("#setting-billing-days").value = f.dias_cobranca_antecipada || 3;
+              if (document.querySelector("#setting-interest-rate")) document.querySelector("#setting-interest-rate").value = f.juros_mora_percentual || 1.0;
+            }
+
+            // Documentos
+            if (data.documentos) {
+              const d = data.documentos;
+              if (document.querySelector("#setting-doc-validity")) document.querySelector("#setting-doc-validity").value = d.validade_padrao_proposta_dias || 10;
+            }
+
+            // Suporte
+            if (data.suporte) {
+              const s = data.suporte;
+              if (document.querySelector("#setting-sla-urgent")) document.querySelector("#setting-sla-urgent").value = s.sla_urgente_min || 15;
+              if (document.querySelector("#setting-sla-default")) document.querySelector("#setting-sla-default").value = s.sla_padrao_horas || 4;
+            }
+          } catch (e) {
+            console.debug("Settings load error:", e);
+          }
+        };
+
+        loadSettingsData();
+
+        // Helper genérico para salvar configurações
+        const registerSaveHandler = (btnId, feedbackId, category, getPayload) => {
+          const btn = document.querySelector(btnId);
+          const fb = document.querySelector(feedbackId);
+          if (!btn) return;
+          btn.onclick = async () => {
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            btn.textContent = "Salvando...";
+            try {
+              const res = await fetch(`${API}/system/settings/${category}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(getPayload())
+              });
+              if (res.ok) {
+                if (fb) {
+                  fb.style.display = "inline";
+                  setTimeout(() => { fb.style.display = "none"; }, 3000);
+                }
+              } else {
+                alert("Erro ao salvar configurações.");
+              }
+            } catch (err) {
+              alert("Erro de conexão ao salvar.");
+            } finally {
+              btn.disabled = false;
+              btn.textContent = originalText;
+            }
+          };
+        };
+
+        registerSaveHandler("#btn-save-geral", "#feedback-save-geral", "geral", () => ({
+          empresa_nome: document.querySelector("#setting-empresa-nome")?.value,
+          nome_fantasia: document.querySelector("#setting-nome-fantasia")?.value,
+          cnpj: document.querySelector("#setting-cnpj")?.value,
+          email_contato: document.querySelector("#setting-email")?.value,
+          idioma: document.querySelector("#setting-idioma")?.value,
+          fuso_horario: document.querySelector("#setting-fuso-horario")?.value
+        }));
+
+        registerSaveHandler("#btn-save-crm", "#feedback-save-crm", "crm", () => ({
+          tempo_limite_primeira_resposta_min: parseInt(document.querySelector("#setting-crm-timeout")?.value || "15", 10),
+          silencio_humano_ativo: document.querySelector("#setting-crm-silence")?.value === "true"
+        }));
+
+        registerSaveHandler("#btn-save-projetos", "#feedback-save-projetos", "projetos", () => ({
+          sprint_padrao_dias: parseInt(document.querySelector("#setting-sprint-days")?.value || "14", 10),
+          prioridade_padrao: document.querySelector("#setting-task-priority")?.value || "medium"
+        }));
+
+        registerSaveHandler("#btn-save-financeiro", "#feedback-save-financeiro", "financeiro", () => ({
+          chave_pix: document.querySelector("#setting-pix-key")?.value,
+          banco_padrao: document.querySelector("#setting-bank-name")?.value,
+          dias_cobranca_antecipada: parseInt(document.querySelector("#setting-billing-days")?.value || "3", 10),
+          juros_mora_percentual: parseFloat(document.querySelector("#setting-interest-rate")?.value || "1.0")
+        }));
+
+        registerSaveHandler("#btn-save-documentos", "#feedback-save-documentos", "documentos", () => ({
+          validade_padrao_proposta_dias: parseInt(document.querySelector("#setting-doc-validity")?.value || "10", 10),
+          requerer_carimbo_tempo: document.querySelector("#setting-doc-timestamp")?.value === "true"
+        }));
+
+        registerSaveHandler("#btn-save-suporte", "#feedback-save-suporte", "suporte", () => ({
+          sla_urgente_min: parseInt(document.querySelector("#setting-sla-urgent")?.value || "15", 10),
+          sla_padrao_horas: parseInt(document.querySelector("#setting-sla-default")?.value || "4", 10)
+        }));
 
         // Botão Testar Todos os Motores
         const btnRetestAll = document.querySelector("#btn-retest-all");
