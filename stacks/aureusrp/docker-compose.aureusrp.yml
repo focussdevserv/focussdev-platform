@@ -2,70 +2,71 @@ version: '3.9'
 
 services:
   aureusrp:
-    image: aureusrp:latest  # TODO: Confirmar imagem e versão
+    image: frappe/erpnext:v15
     container_name: focussdev_aureusrp
     restart: unless-stopped
 
     environment:
-      # Banco de dados
-      DATABASE_URL: postgresql://aureusrp_user:${AUREUSRP_DB_PASSWORD}@aureusrp-db:5432/aureusrp_db
-      POSTGRES_USER: aureusrp_user
-      POSTGRES_PASSWORD: ${AUREUSRP_DB_PASSWORD}
+      # ERPNext/Frappe
+      FRAPPE_APP_INIT: erpnext
+      FRAPPE_USER: Administrator
+      FRAPPE_ADMIN_PASSWORD: ${FRAPPE_ADMIN_PASSWORD}
+      SITE_NAME: erp.focussdev.space
 
-      # Autenticação (Authentik OIDC)
+      # PostgreSQL
+      DB_HOST: aureusrp-db
+      DB_PORT: 5432
+      DB_NAME: aureusrp_db
+      DB_USER: aureusrp_user
+      DB_PASSWORD: ${AUREUSRP_DB_PASSWORD}
+
+      # Redis
+      REDIS_CACHE: redis://aureusrp-redis:6379/0
+      REDIS_QUEUE: redis://aureusrp-redis:6379/1
+      REDIS_SOCKETIO: redis://aureusrp-redis:6379/2
+
+      # Authentik OIDC
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
       OIDC_DISCOVERY_URL: https://auth.focussdev.space/.well-known/openid-configuration
-      OIDC_REDIRECT_URI: https://erp.focussdev.space/auth/callback
 
-      # Supabase (armazenamento de documentos)
+      # Supabase
       SUPABASE_URL: https://supabase.focussdev.space
       SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
-      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
 
-      # Integration Service (webhooks)
-      INTEGRATION_SERVICE_URL: http://integration-service:3000
-      INTEGRATION_SERVICE_API_KEY: ${INTEGRATION_SERVICE_API_KEY}
-
-      # Mercado Pago (futura integração)
-      MERCADO_PAGO_ACCESS_TOKEN: ${MERCADO_PAGO_ACCESS_TOKEN:-}
-
-      # Node env
+      # Ambiente
       NODE_ENV: production
       LOG_LEVEL: info
 
     ports:
-      - "3001:3000"  # Porta interna (proxy via Traefik)
+      - "3001:3000"
 
     volumes:
-      - aureusrp-data:/app/data
-      - aureusrp-logs:/app/logs
+      - aureusrp-data:/home/frappe/frappe-bench/sites
+      - aureusrp-logs:/home/frappe/frappe-bench/logs
 
     depends_on:
       - aureusrp-db
+      - aureusrp-redis
 
     networks:
       - focussdev-network
 
     labels:
-      # Traefik routing
       traefik.enable: "true"
       traefik.http.routers.aureusrp.rule: Host(`erp.focussdev.space`)
       traefik.http.routers.aureusrp.entrypoints: websecure
       traefik.http.routers.aureusrp.tls.certresolver: letsencrypt
-      traefik.http.services.aureusrp.loadbalancer.server.port: "3000"
-
-      # Healthcheck
-      traefik.http.services.aureusrp.loadbalancer.healthcheck.path: /health
+      traefik.http.services.aureusrp.loadbalancer.server.port: "8000"
+      traefik.http.services.aureusrp.loadbalancer.healthcheck.path: /api/health
       traefik.http.services.aureusrp.loadbalancer.healthcheck.interval: 30s
-      traefik.http.services.aureusrp.loadbalancer.healthcheck.timeout: 5s
 
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 60s
+      start_period: 90s
 
   aureusrp-db:
     image: postgres:17.6-alpine
@@ -76,17 +77,32 @@ services:
       POSTGRES_USER: aureusrp_user
       POSTGRES_PASSWORD: ${AUREUSRP_DB_PASSWORD}
       POSTGRES_DB: aureusrp_db
-      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=pt_BR.UTF-8 --lc-ctype=pt_BR.UTF-8"
 
     volumes:
       - aureusrp-db-data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
     networks:
       - focussdev-network
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U aureusrp_user -d aureusrp_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  aureusrp-redis:
+    image: redis:7-alpine
+    container_name: focussdev_aureusrp-redis
+    restart: unless-stopped
+
+    volumes:
+      - aureusrp-redis-data:/data
+
+    networks:
+      - focussdev-network
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -98,29 +114,31 @@ services:
 
     entrypoint: |
       sh -c "
-      apk add --no-cache postgresql-client gzip
+      apk add --no-cache postgresql-client gzip tar
       while true; do
-        BACKUP_DIR=/backups/$(date +\%Y\%m\%d_\%H\%M\%S)
+        STAMP=\$(date -u +%Y%m%dT%H%M%SZ)
+        BACKUP_DIR=/backups/\$STAMP
         mkdir -p \$BACKUP_DIR
 
-        # Backup banco
-        pg_dump -h aureusrp-db -U aureusrp_user -d aureusrp_db | gzip -9 > \$BACKUP_DIR/aureusrp.sql.gz
+        # Backup Postgres
+        pg_dump -h aureusrp-db -U aureusrp_user -d aureusrp_db | gzip -9 > \$BACKUP_DIR/aureusrp-postgres.sql.gz
 
-        # Backup dados da aplicação
-        tar czf \$BACKUP_DIR/aureusrp-data.tar.gz /app-data
+        # Backup ERPNext sites
+        tar czf \$BACKUP_DIR/aureusrp-sites.tar.gz /sites 2>/dev/null || true
 
         echo \"✅ Backup em \$BACKUP_DIR\"
 
-        # Manter apenas últimos 30 dias
-        find /backups -type d -mtime +30 -exec rm -rf {} \;
+        # Manter últimos 30 dias
+        find /backups -type d -mtime +30 -exec rm -rf {} + 2>/dev/null || true
 
-        # Aguardar próximo backup (daily)
+        # Daily backup
         sleep 86400
       done
       "
 
     volumes:
-      - aureusrp-db-data:/app-data:ro
+      - aureusrp-db-data:/backups-source:ro
+      - aureusrp-data:/sites:ro
       - /var/backups/focussdev/aureusrp:/backups
 
     depends_on:
@@ -135,7 +153,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /var/data/focussdev/aureusrp/app
+      device: /var/data/focussdev/aureusrp/sites
 
   aureusrp-logs:
     driver: local
@@ -150,6 +168,13 @@ volumes:
       type: none
       o: bind
       device: /var/data/focussdev/aureusrp/postgres
+
+  aureusrp-redis-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/data/focussdev/aureusrp/redis
 
 networks:
   focussdev-network:
